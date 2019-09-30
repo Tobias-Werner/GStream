@@ -59,21 +59,21 @@ The following window types can be used in a stream view.
 [TILT <duriation> ms]
 
 -- Sliding distance window
-[SLIDE <distance> m ON the_geom]
+[SLIDE <distance> m ON <geometry-column>]
 
 -- Tilting distance window
-[TILT <distance> m ON the_geom]
+[TILT <distance> m ON <geometry-column>]
 
 -- Waypoint window
-[WAY '<Multipoint-as-WKT>' ON the_geom]
+[WAY '<Multipoint-as-WKT>' ON <geometry-column>]
 
 -- Session distance window
-[SESSION <distance> m ON the_geom]
+[SESSION <distance> m ON <geometry-column>]
 
 -- Jumping distance window
-[JUMPING <distance> m ON the_geom]
+[JUMPING <distance> m ON <geometry-column>]
 ```
 A more detailed description of how to use the extension can be found in test/src/tests.cpp.
 
-### References
+### Citing
 Werner, T.; Brinkhoff, T. (2018): Managing Spatio-Temporal Data Streams on AUVs. Proceedings of the IEEE/OES Autonomous Underwater Vehicles Workshop (AUV), Porto, Portugal , doi: 10.1109/AUV.2018.8729817 
