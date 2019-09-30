@@ -2,10 +2,10 @@
 
 GStream is a lightweight SQLite extension for processing spatio-temporal datastreams on embedded systems.
 
-##Installation
+## Installation
 The extension can be installed via from source or via a precompiled binary.
 
-####From source
+#### From source
 First, prepare the environment by calling the following script. It will download and install all dependencies and tools for compiling.
 ```
 tools/setupEnvironment.sh 
@@ -20,7 +20,7 @@ make
 sudo make install
 ```
 
-####Precompiled binaries
+#### Precompiled binaries
 
 Precompiled binaries for different cpu architectures can be downloaded via following links. 
 
@@ -31,12 +31,12 @@ Install the DEB file via double click or via console with:
 ```
 sudo dpkg -i <DEB-file>
 ```
-####Testing (optional)
+#### Testing (optional)
 After installing the functionalities of the extension can be tested via a testing program. Call it in a shell with
 ```
 libstream-tests
 ```
-###Basic Usage
+### Basic Usage
 The following usage examples are based on sql commands. This commands can be passed via sqlite console or directly in a program as raw string.
 
 ```
@@ -75,5 +75,5 @@ The following window types can be used in a stream view.
 ```
 A more detailed description of how to use the extension can be found in test/src/tests.cpp.
 
-###References
+### References
 Werner, T.; Brinkhoff, T. (2018): Managing Spatio-Temporal Data Streams on AUVs. Proceedings of the IEEE/OES Autonomous Underwater Vehicles Workshop (AUV), Porto, Portugal , doi: 10.1109/AUV.2018.8729817 
