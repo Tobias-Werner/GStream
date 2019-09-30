@@ -1,3 +1,6 @@
+# install dependencies
+sudo apt-get install cmake git lemon flex libsqlite3-0 libsqlite3-dev
+
 # install Catch2 Test-Framework
 cd ~
 git clone https://github.com/catchorg/Catch2.git
