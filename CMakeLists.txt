@@ -16,11 +16,10 @@ set(DST_HARDWARE "LINUX64")
 
 #############################################
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wuninitialized -Wno-unused-parameter -fstandalone-debug")
-#set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wuninitialized -Wno-unused-parameter -O3")
+#set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wuninitialized -Wno-unused-parameter -fstandalone-debug")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wuninitialized -Wno-unused-parameter -O3")
 
 find_package(Threads)
-find_package(Catch2 REQUIRED)
 find_package (SQLite3)
 
 include_directories(${SQLITE3_INCLUDE_DIRS})
@@ -31,6 +30,8 @@ include_directories(include)
 add_library(streams SHARED ${sources})
 set_property(TARGET streams PROPERTY POSITION_INDEPENDENT_CODE ON)
 
+add_library(Catch INTERFACE)
+target_include_directories(Catch INTERFACE test/include/catch)
 
 IF (UPDATE_PARSER)
     add_custom_target(
@@ -41,7 +42,7 @@ IF (UPDATE_PARSER)
 ENDIF ()
 
 add_executable(libstream-tests test/src/tests.cpp)
-target_link_libraries(libstream-tests LINK_PUBLIC sqlite3 ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS} Catch2::Catch2 streams)
+target_link_libraries(libstream-tests LINK_PUBLIC sqlite3 ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS} Catch streams)
 add_dependencies(libstream-tests streams)
 
 set(CMAKE_SYSTEM_NAME Linux)
