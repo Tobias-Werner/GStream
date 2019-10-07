@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Tobias-Werner/GStream.svg?branch=master)](https://travis-ci.org/Tobias-Werner/GStream)
+
 # GStream
 
 GStream is a lightweight SQLite extension for processing spatio-temporal datastreams on embedded systems.
