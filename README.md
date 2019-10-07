@@ -6,6 +6,8 @@ GStream is a lightweight SQLite extension for processing spatio-temporal datastr
 ### Basic Usage
 The following usage examples are based on sql commands. This commands can be passed via sqlite console or directly in a program as raw string.
 
+#### Prerequisites
+
 ```
 -- Loading the extension
 SELECT load_extension('libstreams');
@@ -17,14 +19,23 @@ CREATE VIRTUAL TABLE <streamName> USING stream(<attributeName> <attributeType>);
 CREATE VIRTUAL TABLE <viewName> USING stream_view(SELECT <attributeList> FROM <streamName> <window>);
 ```
 
+#### Window types
+
 The following window types can be used in a stream view.
+
+##### Temporal
+
 ```
 -- Sliding time window
 [SLIDE <duriation> ms]
 
 -- Tilting time window
 [TILT <duriation> ms]
+```
 
+##### Spatial
+
+```
 -- Sliding distance window
 [SLIDE <distance> m ON <geometry-column>]
 
@@ -40,6 +51,35 @@ The following window types can be used in a stream view.
 -- Jumping distance window
 [JUMPING <distance> m ON <geometry-column>]
 ```
+
+#### Encoding of Geometries
+
+Encoding and decoding of geometries can be done by two functions.
+```
+-- Encoding geometry (converting from WKT to TWKB)
+geomFromWKT('<geometry-as-WKT>', <precision>))
+
+-- Decoding geometry (converting from TWKB to WKT)
+asWKT(<geometry-column>)
+``` 
+
+### Minimal example
+
+```
+-- Create a data stream with a geometry column
+CREATE VIRTUAL TABLE a_stream USING stream(the_geom GEOMETRY);
+
+-- Applying a sliding distance window
+CREATE VIRTUAL TABLE a_view USING streamview(SELECT the_geom FROM a_stream [SLIDE 100 ms]);
+
+-- Inserting a single location geometry
+INSERT INTO a_stream(the_geom) VALUES(geomFromWKT('POINT (8.205981673199906  53.10468771859567)', 6));
+
+-- Querying the sliding distance window
+SELECT asWKT(the_geom) AS wkt FROM a_view;
+```
+
+
 A more detailed description of how to use the extension can be found in test/src/tests.cpp.
 
 ### Citing
