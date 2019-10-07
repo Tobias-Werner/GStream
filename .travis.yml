@@ -4,6 +4,12 @@ compiler:
   - clang
   - gcc
 
+before_install:
+  - sudo apt-get update
+
+install:
+  - sudo apt-get install cmake git lemon flex libsqlite3-0 libsqlite3-dev
+
 before_script:
   - mkdir build
   - cd build
