@@ -20,9 +20,6 @@ set(DST_HARDWARE "LINUX64")
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wuninitialized -Wno-unused-parameter -O3")
 
 find_package(Threads)
-find_package (SQLite3)
-
-include_directories(${SQLITE3_INCLUDE_DIRS})
 
 file(GLOB_RECURSE sources src/*.cpp include/*.h)
 include_directories(include)
