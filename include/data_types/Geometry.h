@@ -85,6 +85,14 @@ namespace STREAM {
 
     private:
 
+        void readPoint(const char *current, const signed char &precisionXY);
+
+        void readMultipoint(const char *current, const signed char &precisionXY);
+
+        void readLinestring(const char *current, const signed char &precisionXY);
+
+        void readPolygon(const char *current, const signed char &precisionXY);
+
         static bytes_t encode(const double &value, const signed char &precision);
 
         static void append(bytes_t &twkb);
@@ -118,7 +126,6 @@ namespace STREAM {
         static uint32_t encodeZigZag(const int32_t &value);
 
         static int32_t decodeZigZag(const uint32_t &value);
-
 
         constexpr const static double EarthRadiusKm = 6372.8 * 1000;
 
