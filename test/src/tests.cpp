@@ -66,14 +66,14 @@ void exec(std::string sql) {
                         stringstream stream;
 
                         for (size_t k = 0; k < size; k++) {
-                            if (bytes[k] != '\r')
-                                stream << bytes[k] << " ";
-                            else
-                                stream << "\\x0D" << " ";
-                            //printf("%02x ", bytes[k]);
+//                            if (bytes[k] != '\r')
+//                                stream << bytes[k] << " ";
+//                            else
+//                                stream << "\\x0D" << " ";
+                            printf("%02x ", bytes[k]);
                         }
 
-                        cout << stream.str() << "\t\t\t\t";
+                        //cout << stream.str() << "\t\t\t\t";
 
                         break;
                     }
@@ -202,102 +202,106 @@ void delay(size_t ms) {
 TEST_CASE("SQLite extension") {
 
 
-SECTION("Create database") {
+    SECTION("Create database") {
 //remove("~/testdb.sqlite");
-CHECK(SQLITE_OK == sqlite3_open(":memory:", &db));
-}
+        CHECK(SQLITE_OK == sqlite3_open(":memory:", &db));
+    }
 
-SECTION("Load stream extension") {
-char *zErrMsg = 0;
+    SECTION("Load stream extension") {
+        char *zErrMsg = 0;
 
-CHECK(SQLITE_OK ==
-sqlite3_enable_load_extension(db,
-1));
-CHECK(SQLITE_OK ==
-sqlite3_load_extension(db,
-"./libstreams", nullptr, &zErrMsg));
+        CHECK(SQLITE_OK ==
+              sqlite3_enable_load_extension(db,
+                                            1));
+        CHECK(SQLITE_OK ==
+              sqlite3_load_extension(db,
+                                     "./libstreams", nullptr, &zErrMsg));
 
-if (zErrMsg != nullptr)
-fprintf(stderr,
-"SQL error: %s\n", zErrMsg);
-}
+        if (zErrMsg != nullptr)
+            fprintf(stderr,
+                    "SQL error: %s\n", zErrMsg);
+    }
 
-SECTION("Create spatial stream") {
-exec("CREATE VIRTUAL TABLE s USING stream(the_geom GEOMETRY);");
+    SECTION("Create spatial stream") {
+        exec("CREATE VIRTUAL TABLE s USING stream(the_geom GEOMETRY);");
 
-exec("CREATE VIRTUAL TABLE v1 USING streamview(SELECT the_geom FROM s [SLIDE 100 ms]);");
-exec("CREATE VIRTUAL TABLE v2 USING streamview(SELECT the_geom FROM s [TILT 100 ms]);");
-exec("CREATE VIRTUAL TABLE v3 USING streamview(SELECT the_geom FROM s [SLIDE 150.0 m ON the_geom]);");
-exec("CREATE VIRTUAL TABLE v4 USING streamview(SELECT the_geom FROM s [TILT 150.0 m ON the_geom]);");
-exec("CREATE VIRTUAL TABLE v5 USING streamview(SELECT the_geom FROM s [WAY 'MULTIPOINT(8.2133843340883903 53.11456976365428062, 8.21827274164293797 53.11261177245636134)' ON the_geom]);");
-exec("CREATE VIRTUAL TABLE v6 USING streamview(SELECT the_geom FROM s [SESSION 80.0 m ON the_geom]);");
-exec("CREATE VIRTUAL TABLE v7 USING streamview(SELECT the_geom FROM s [JUMPING 500.0 m ON the_geom]);");
-//exec("CREATE VIRTUAL TABLE v8 USING streamview(SELECT the_geom FROM s [AREA 'POINT()' 'POINT()'  ON the_geom]);");
+        exec("CREATE VIRTUAL TABLE v1 USING streamview(SELECT the_geom FROM s [SLIDE 100 ms]);");
+        exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POLYGON((8.205981673199906 53.10468771859567, 8.2133843340883903 53.11456976365428062, 8.21827274164293797 53.11261177245636134, 8.205981673199906 53.10468771859567), (8.21361 53.11339, 8.21202 53.11061, 8.21512 53.11153, 8.21361 53.11339))', 6));");
+        exec("SELECT asWKT(the_geom) AS wkt FROM v1;");
+        exec("SELECT the_geom AS wkt FROM v1;");
 
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.205981673199906  53.10468771859567)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.206247082195345 53.105032952930785)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.206578843439642 53.105457852923784)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.20677790018622 53.105803081077326)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.207087544014231 53.106307640317155)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.207463540091101 53.106666139337946)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.207883771000544 53.107210521025699)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.208326119326275 53.107927501027085)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.208591528321714 53.108339095256987)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.208945406982298 53.108737408503039)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.209166581145164 53.109148994981645)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.209387755308027 53.109560577521094)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.209785868801184 53.110091645944955)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.210051277796621 53.110596154872958)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.210272451959487 53.111020999905691)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.210714800285217 53.111538774114365)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.210913857031795 53.111976885882946)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.211422557606385 53.112627407244034)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.211887023348401 53.113145162110008)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.212373606506706 53.11371601281288)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.212572663253283 53.114127551641495)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.212838072248722 53.114459434924449)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.214054530144479 53.114485985476421)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.214872874547078 53.114393058472793)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.21606721502655 53.113994797611035)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.21688555942915 53.11349032855712)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.21790296057833 53.113105335033964)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.218389543736631 53.112375165435473)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.218323191487771 53.111366183404186)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.21790296057833 53.110025262750639)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.216376858854561 53.108060273789718)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
-exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.21613356727541 53.107330018522653)', 6));");
-exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("CREATE VIRTUAL TABLE v2 USING streamview(SELECT the_geom FROM s [TILT 100 ms]);");
+//exec("CREATE VIRTUAL TABLE v3 USING streamview(SELECT the_geom FROM s [SLIDE 150.0 m ON the_geom]);");
+//exec("CREATE VIRTUAL TABLE v4 USING streamview(SELECT the_geom FROM s [TILT 150.0 m ON the_geom]);");
+//exec("CREATE VIRTUAL TABLE v5 USING streamview(SELECT the_geom FROM s [WAY 'MULTIPOINT(8.2133843340883903 53.11456976365428062, 8.21827274164293797 53.11261177245636134)' ON the_geom]);");
+//exec("CREATE VIRTUAL TABLE v6 USING streamview(SELECT the_geom FROM s [SESSION 80.0 m ON the_geom]);");
+//exec("CREATE VIRTUAL TABLE v7 USING streamview(SELECT the_geom FROM s [JUMPING 500.0 m ON the_geom]);");
+////exec("CREATE VIRTUAL TABLE v8 USING streamview(SELECT the_geom FROM s [AREA 'POINT()' 'POINT()'  ON the_geom]);");
+//
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.205981673199906  53.10468771859567)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.206247082195345 53.105032952930785)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.206578843439642 53.105457852923784)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.20677790018622 53.105803081077326)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.207087544014231 53.106307640317155)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.207463540091101 53.106666139337946)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.207883771000544 53.107210521025699)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.208326119326275 53.107927501027085)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.208591528321714 53.108339095256987)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.208945406982298 53.108737408503039)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.209166581145164 53.109148994981645)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.209387755308027 53.109560577521094)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.209785868801184 53.110091645944955)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.210051277796621 53.110596154872958)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.210272451959487 53.111020999905691)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.210714800285217 53.111538774114365)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.210913857031795 53.111976885882946)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.211422557606385 53.112627407244034)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.211887023348401 53.113145162110008)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.212373606506706 53.11371601281288)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.212572663253283 53.114127551641495)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.212838072248722 53.114459434924449)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.214054530144479 53.114485985476421)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.214872874547078 53.114393058472793)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.21606721502655 53.113994797611035)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.21688555942915 53.11349032855712)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.21790296057833 53.113105335033964)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.218389543736631 53.112375165435473)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.218323191487771 53.111366183404186)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.21790296057833 53.110025262750639)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.216376858854561 53.108060273789718)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
+//exec("INSERT INTO s(the_geom) VALUES(geomFromWKT('POINT (8.21613356727541 53.107330018522653)', 6));");
+//exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
 
 
 
@@ -318,7 +322,7 @@ exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
 //
 //exec("SELECT rowid, the_geom FROM v1;", 1000);
 //        exec("SELECT rowid, the_geom FROM v2;", 1000);
-}
+    }
 
 //    SECTION("Create streamA") {
 //        exec("CREATE VIRTUAL TABLE streamA USING stream(int_value INTEGER, real_value REAL, text_value TEXT, blob_value BLOB);");
@@ -377,7 +381,7 @@ exec("SELECT asWKT(the_geom) AS wkt FROM v7;");
 //    }
 
 
-SECTION("Close DB") {
-sqlite3_close(db);
-}
+    SECTION("Close DB") {
+        sqlite3_close(db);
+    }
 }
