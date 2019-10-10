@@ -87,11 +87,17 @@ namespace STREAM {
 
         void readPoint(const char *current, const signed char &precisionXY);
 
+        void readPoint(const char *current, const signed char &precisionXY, const u_char &precisionZ);
+
         void readMultipoint(const char *current, const signed char &precisionXY);
 
         void readLinestring(const char *current, const signed char &precisionXY);
 
+        void readLinestring(const char *current, const signed char &precisionXY, const u_char &precisionZ);
+
         void readPolygon(const char *current, const signed char &precisionXY);
+
+        void readPolygon(const char *current, const signed char &precisionXY, const u_char &precisionZ);
 
         static bytes_t encode(const double &value, const signed char &precision);
 
@@ -104,20 +110,27 @@ namespace STREAM {
 
         static bytes_t encode(const Vector3D &vector, const signed char &precisionXY, const u_char precisionZ);
 
-        static bytes_t encode(const Vector4D &vector, const signed char &precisionXY, const u_char precisionZ, const u_char precisionT);
+        static bytes_t encode(const Vector4D &vector, const signed char &precisionXY, const u_char precisionZ,
+                              const u_char precisionT);
 
         static int32_t decodeVarint(const bytes_t &bytes);
 
         static bytes_t encodeVarint(uint32_t value);
 
-        static bytes_t createHeader(const u_char &type, const signed char &precisionXY, const bool &bbox, const bool &sizes, const bool &idlist, const bool &extendedDimensions,
-                                    const bool &emptyGeom);
+        static bytes_t
+        createHeader(const u_char &type, const signed char &precisionXY, const bool &bbox, const bool &sizes,
+                     const bool &idlist, const bool &extendedDimensions,
+                     const bool &emptyGeom);
 
-        static bytes_t createHeader(const u_char &type, const signed char &precisionXY, const bool &bbox, const bool &sizes, const bool &idlist, const bool &extendedDimensions,
-                                    const bool &emptyGeom, const u_char &precisionZ);
+        static bytes_t
+        createHeader(const u_char &type, const signed char &precisionXY, const bool &bbox, const bool &sizes,
+                     const bool &idlist, const bool &extendedDimensions,
+                     const bool &emptyGeom, const u_char &precisionZ);
 
-        static bytes_t createHeader(const u_char &type, const signed char &precisionXY, const bool &bbox, const bool &sizes, const bool &idlist, const bool &extendedDimensions,
-                                    const bool &emptyGeom, const u_char &precisionZ, const u_char &precisionT);
+        static bytes_t
+        createHeader(const u_char &type, const signed char &precisionXY, const bool &bbox, const bool &sizes,
+                     const bool &idlist, const bool &extendedDimensions,
+                     const bool &emptyGeom, const u_char &precisionZ, const u_char &precisionT);
 
         static uint32_t readUnsignedInt(std::vector<u_char>::iterator &iterator);
 
@@ -146,7 +159,8 @@ namespace STREAM {
 
         Geometry(const std::string &wkt_str, const signed char &precisionXY, const u_char &precisionZ);
 
-        Geometry(const std::string &wkt_str, const signed char &precisionXY, const u_char &precisionZ, const u_char &precisionT);
+        Geometry(const std::string &wkt_str, const signed char &precisionXY, const u_char &precisionZ,
+                 const u_char &precisionT);
 
         bool isEmpty();
 
@@ -154,7 +168,8 @@ namespace STREAM {
 
         void readMetadataAndCoordinates(int &type, int &dimension, std::list<double> &result);
 
-        void readCoordinates(std::vector<u_char>::iterator &iterator, int &type, int &dimension, int &precision, std::list<double> &result);
+        void readCoordinates(std::vector<u_char>::iterator &iterator, int &type, int &dimension, int &precision,
+                             std::list<double> &result);
 
         void readMetadata(std::vector<u_char>::iterator &iterator, int &type, int &dimension, int &precision);
 
@@ -166,7 +181,8 @@ namespace STREAM {
 
         static bool pointOverlapsMultipoint(Geometry *multipoint, Geometry *point, const double tolerance);
 
-        static void Local2Global(const double &lat, const double &lon, const double &northDiff, const double &eastDiff, double &xDiff, double &yDiff, double &zDiff);
+        static void Local2Global(const double &lat, const double &lon, const double &northDiff, const double &eastDiff,
+                                 double &xDiff, double &yDiff, double &zDiff);
 
         static void LatLon2XYZ(const double &lat, const double &lon, double &x, double &y, double &z);
 
