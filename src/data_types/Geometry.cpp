@@ -612,28 +612,44 @@ string Geometry::asWKT() {
 
         switch (type) {
             case POINT: {
-                stream << "POINT (";
+                stream << "POINT (" << setprecision(precisionXY) << fixed;
 
                 if (extendedDimensions) {
-
 
                     // Z dimension
                     if (*bytePtr & 0x01) {
 
+                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
+
+                        bytePtr++;
+
+                        auto x = readDouble(bytePtr, precisionXY);
+                        auto y = readDouble(bytePtr, precisionXY);
+                        auto z = readDouble(bytePtr, precisionZ);
+                        stream << x << " " << y << setprecision(precisionZ) << " " << z;
 
                     }
 
                     // Z and T dimension
                     if (*bytePtr & 0x02) {
 
+                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
+                        auto precisionT = (*bytePtr & 0xE0) >> 5;
+
+                        bytePtr++;
+
+                        auto x = readDouble(bytePtr, precisionXY);
+                        auto y = readDouble(bytePtr, precisionXY);
+                        auto z = readDouble(bytePtr, precisionZ);
+                        auto t = readDouble(bytePtr, precisionT);
+                        stream << x << " " << y << " " << setprecision(precisionZ) << z << " "
+                               << setprecision(precisionT) << t;
                     }
 
                 } else {
-
                     auto x = readDouble(bytePtr, precisionXY);
                     auto y = readDouble(bytePtr, precisionXY);
-
-                    stream << setprecision(precisionXY) << fixed << x << " " << y;
+                    stream << x << " " << y;
                 }
 
                 stream << ")";
@@ -641,20 +657,62 @@ string Geometry::asWKT() {
                 break;
             }
             case LINESTRING: {
-                stream << "LINESTRING (";
+                stream << "LINESTRING (" << setprecision(precisionXY) << fixed;
 
                 if (extendedDimensions) {
 
 
                     // Z dimension
                     if (*bytePtr & 0x01) {
+                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
 
+                        bytePtr++;
+
+                        auto numPoints = readUnsignedInt(bytePtr);
+
+                        double x = readDouble(bytePtr, precisionXY);
+                        double y = readDouble(bytePtr, precisionXY);
+                        double z = readDouble(bytePtr, precisionZ);
+
+                        stream << x << " " << y << " " << setprecision(precisionZ) << z;
+
+                        for (size_t i = 1; i < numPoints; i++) {
+                            x += readDouble(bytePtr, precisionXY);
+                            y += readDouble(bytePtr, precisionXY);
+                            z += readDouble(bytePtr, precisionZ);
+
+                            stream << ", " << setprecision(precisionXY) << x << " " << y << " "
+                                   << setprecision(precisionZ) << z;
+                        }
 
                     }
 
                     // Z and T dimension
                     if (*bytePtr & 0x02) {
+                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
+                        auto precisionT = (*bytePtr & 0xE0) >> 5;
 
+                        bytePtr++;
+
+                        auto numPoints = readUnsignedInt(bytePtr);
+
+                        double x = readDouble(bytePtr, precisionXY);
+                        double y = readDouble(bytePtr, precisionXY);
+                        double z = readDouble(bytePtr, precisionZ);
+                        double t = readDouble(bytePtr, precisionT);
+
+                        stream << x << " " << y << " " << setprecision(precisionZ) << z << " "
+                               << setprecision(precisionT) << t;
+
+                        for (size_t i = 1; i < numPoints; i++) {
+                            x += readDouble(bytePtr, precisionXY);
+                            y += readDouble(bytePtr, precisionXY);
+                            z += readDouble(bytePtr, precisionZ);
+                            t += readDouble(bytePtr, precisionT);
+
+                            stream << ", " << setprecision(precisionXY) << x << " " << y << " "
+                                   << setprecision(precisionZ) << z << " " << setprecision(precisionT) << t;
+                        }
                     }
 
                 } else {
@@ -664,13 +722,13 @@ string Geometry::asWKT() {
                     double x = readDouble(bytePtr, precisionXY);
                     double y = readDouble(bytePtr, precisionXY);
 
-                    stream << setprecision(precisionXY) << fixed << x << " " << y;
+                    stream << x << " " << y;
 
                     for (size_t i = 1; i < numPoints; i++) {
                         x += readDouble(bytePtr, precisionXY);
                         y += readDouble(bytePtr, precisionXY);
 
-                        stream << setprecision(precisionXY) << fixed << "," << x << " " << y;
+                        stream << ", " << x << " " << y;
                     }
                 }
 
