@@ -214,6 +214,112 @@ void Geometry::readLinestring(const char *current, const signed char &precisionX
     }
 }
 
+void Geometry::readPolygon(const char *current, const signed char &precisionXY, const u_char &precisionZ) {
+    char *end_double;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    if (*current == '(') current++;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    std::list<std::list<int32_t >> rings;
+
+    // Iterate through rings
+    while (true) {
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current == '(') current++;
+        while (*current == ' ') current++; // Eliminate whitespaces
+
+        std::list<int32_t> coordinates;
+
+        // Iterate through coordinates
+        while (true) {
+            double x = strtod(current, &end_double);
+            int32_t xShrinked = shrink(x, precisionXY);
+            coordinates.push_back(xShrinked); // x
+            current = end_double;
+
+            double y = strtod(current, &end_double);
+            int32_t yShrinked = shrink(y, precisionXY);
+            coordinates.push_back(yShrinked); // y
+            current = end_double;
+
+            double z = strtod(current, &end_double);
+            int32_t zShrinked = shrink(z, precisionZ);
+            coordinates.push_back(zShrinked); // z
+            current = end_double;
+
+            while (*current == ' ') current++; // Eliminate whitespaces
+            if (*current != ',') break;
+            else current++;
+        }
+
+        rings.push_back(move(coordinates));
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current == ')') current++;
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current != ',') break;
+        else current++;
+    }
+
+
+    if (*current == ')') {
+        bytes_t twkb = createHeader(POLYGON, precisionXY, false, false, false, true, false, precisionZ);
+
+        auto nRings = Geometry::encodeVarint(rings.size());
+        append(twkb, nRings);
+
+        int32_t xPrev = 0;
+        int32_t yPrev = 0;
+        int32_t zPrev = 0;
+
+        for (auto &coordinates : rings) {
+
+            auto bytes = Geometry::encodeVarint(coordinates.size() / 3);
+            append(twkb, bytes);
+
+            auto it = coordinates.begin();
+            auto end = coordinates.end();
+
+            while (true) {
+
+                auto x = *it++;
+                auto y = *it++;
+                auto z = *it++;
+
+                int32_t xDiff = x - xPrev;
+                int32_t yDiff = y - yPrev;
+                int32_t zDiff = z - zPrev;
+
+                auto zigZagX = encodeZigZag(xDiff);
+                auto zigZagY = encodeZigZag(yDiff);
+                auto zigZagZ = encodeZigZag(zDiff);
+
+                auto varintX = encodeVarint(zigZagX);
+                auto varintY = encodeVarint(zigZagY);
+                auto varintZ = encodeVarint(zigZagZ);
+
+                append(twkb, varintX);
+                append(twkb, varintY);
+                append(twkb, varintZ);
+
+                xPrev = x;
+                yPrev = y;
+                zPrev = z;
+
+                if (it == end)
+                    break;
+            }
+        }
+
+        this->data = vector<u_char>{twkb.begin(), twkb.end()};
+
+    }
+}
+
 void Geometry::readPolygon(const char *current, const signed char &precisionXY) {
     char *end_double;
 
@@ -531,6 +637,19 @@ Geometry::Geometry(const string &wkt_str, const signed char &precisionXY, const 
             return;
         }
 
+        current = begin;
+        if (*current++ == 'P' &&
+            *current++ == 'O' &&
+            *current++ == 'L' &&
+            *current++ == 'Y' &&
+            *current++ == 'G' &&
+            *current++ == 'O' &&
+            *current++ == 'N') {
+
+            readPolygon(current, precisionXY, precisionZ);
+            return;
+        }
+
 
     } catch (exception ex) {
         cout << "Error: " << ex.what() << endl;
@@ -661,7 +780,6 @@ string Geometry::asWKT() {
 
                 if (extendedDimensions) {
 
-
                     // Z dimension
                     if (*bytePtr & 0x01) {
                         auto precisionZ = (*bytePtr & 0x1C) >> 2;
@@ -742,16 +860,77 @@ string Geometry::asWKT() {
 
                 if (extendedDimensions) {
 
-
                     // Z dimension
                     if (*bytePtr & 0x01) {
+                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
 
+                        bytePtr++;
 
+                        auto numRings = readUnsignedInt(bytePtr);
+
+                        double x = 0;
+                        double y = 0;
+                        double z = 0;
+
+                        for (size_t i = 0; i < numRings; i++) {
+                            stream << "(";
+
+                            auto numPoints = readUnsignedInt(bytePtr);
+
+                            for (size_t j = 0; j < numPoints; j++) {
+                                x += readDouble(bytePtr, precisionXY);
+                                y += readDouble(bytePtr, precisionXY);
+                                z += readDouble(bytePtr, precisionZ);
+
+                                stream << setprecision(precisionXY) << fixed << x << " " << y << " "
+                                       << setprecision(precisionZ) << z;
+
+                                if (j < numPoints - 1)
+                                    stream << ", ";
+                            }
+
+                            stream << ")";
+                            if (i < numRings - 1)
+                                stream << ", ";
+                        }
                     }
 
                     // Z and T dimension
                     if (*bytePtr & 0x02) {
+                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
+                        auto precisionT = (*bytePtr & 0xE0) >> 5;
 
+                        bytePtr++;
+
+                        auto numRings = readUnsignedInt(bytePtr);
+
+                        double x = 0;
+                        double y = 0;
+                        double z = 0;
+                        double t = 0;
+
+                        for (size_t i = 0; i < numRings; i++) {
+                            stream << "(";
+
+                            auto numPoints = readUnsignedInt(bytePtr);
+
+                            for (size_t i = 0; i < numPoints; i++) {
+                                x += readDouble(bytePtr, precisionXY);
+                                y += readDouble(bytePtr, precisionXY);
+                                z += readDouble(bytePtr, precisionZ);
+                                t += readDouble(bytePtr, precisionT);
+
+                                stream << setprecision(precisionXY) << fixed << x << " " << y << " "
+                                       << setprecision(precisionZ) << z << setprecision(precisionT) << " " << t;
+
+                                if (i < numPoints - 1)
+                                    stream << ", ";
+                            }
+
+                            stream << ")";
+                            if (i < numRings - 1)
+                                stream << ", ";
+                        }
                     }
 
                 } else {
