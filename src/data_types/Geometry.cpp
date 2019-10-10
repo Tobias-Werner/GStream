@@ -308,6 +308,7 @@ void Geometry::readPolygon(const char *current, const signed char &precisionXY) 
     }
 }
 
+
 Geometry::Geometry(const STREAM::Geometry &other) {
     this->data.insert(this->data.begin(), other.data.begin(), other.data.end());
 }
@@ -323,7 +324,6 @@ Geometry::Geometry(const string &wkt_str, const signed char &precisionXY) {
 
         const char *current = wkt_str.c_str();
         const char *begin = current;
-        char *end_double;
 
         while (*current == ' ') current++; // Eliminate whitespaces
 
@@ -389,46 +389,149 @@ Geometry::Geometry(const string &wkt_str, const signed char &precisionXY) {
 
 }
 
+void Geometry::readPoint(const char *current, const signed char &precisionXY, const u_char &precisionZ) {
+
+    char *end_double;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    if (*current == '(') current++;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    double x = strtod(current, &end_double);
+    current = end_double;
+    double y = strtod(current, &end_double);
+    current = end_double;
+    double z = strtod(current, &end_double);
+    current = end_double;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    if (*current == ')') {
+        bytes_t twkb = createHeader(POINT, precisionXY, false, false, false, true, false, precisionZ);
+        auto locations = encode(Vector3D(x, y, z), precisionXY, static_cast<signed char>(precisionZ));
+        append(twkb, locations);
+
+        this->data = move(vector<u_char>{make_move_iterator(twkb.begin()), make_move_iterator(twkb.end())});
+    }
+}
+
+void Geometry::readLinestring(const char *current, const signed char &precisionXY, const u_char &precisionZ) {
+    char *end_double;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    if (*current == '(') current++;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    std::list<int32_t> coordinates;
+
+    while (true) {
+        double x = strtod(current, &end_double);
+        int32_t xShrinked = shrink(x, precisionXY);
+        coordinates.push_back(xShrinked); // x
+        current = end_double;
+
+        double y = strtod(current, &end_double);
+        int32_t yShrinked = shrink(y, precisionXY);
+        coordinates.push_back(yShrinked); // y
+        current = end_double;
+
+        double z = strtod(current, &end_double);
+        int32_t zShrinked = shrink(z, precisionZ);
+        coordinates.push_back(zShrinked); // z
+        current = end_double;
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current != ',') break;
+        else current++;
+    }
+
+    if (*current == ')') {
+        bytes_t twkb = createHeader(LINESTRING, precisionXY, false, false, false, true, false, precisionZ);
+
+        auto bytes = Geometry::encodeVarint(coordinates.size() / 3);
+        append(twkb, bytes);
+
+        auto it = coordinates.begin();
+        auto end = coordinates.end();
+
+        int32_t xPrev = 0;
+        int32_t yPrev = 0;
+        int32_t zPrev = 0;
+
+        while (true) {
+
+            auto x = *it++;
+            auto y = *it++;
+            auto z = *it++;
+
+            int32_t xDiff = x - xPrev;
+            int32_t yDiff = y - yPrev;
+            int32_t zDiff = z - zPrev;
+
+            auto zigZagX = encodeZigZag(xDiff);
+            auto zigZagY = encodeZigZag(yDiff);
+            auto zigZagZ = encodeZigZag(zDiff);
+
+            auto varintX = encodeVarint(zigZagX);
+            auto varintY = encodeVarint(zigZagY);
+            auto varintZ = encodeVarint(zigZagZ);
+
+            append(twkb, varintX);
+            append(twkb, varintY);
+            append(twkb, varintZ);
+
+            xPrev = x;
+            yPrev = y;
+            zPrev = z;
+
+            if (it == end)
+                break;
+        }
+
+        this->data = vector<u_char>{twkb.begin(), twkb.end()};
+
+    }
+}
+
 Geometry::Geometry(const string &wkt_str, const signed char &precisionXY, const u_char &precisionZ) {
     try {
 
         const char *current = wkt_str.c_str();
         const char *begin = current;
-        char *end_double;
 
         while (*current == ' ') current++; // Eliminate whitespaces
 
-        // Check if its a point geometry
         if (*current++ == 'P' &&
             *current++ == 'O' &&
             *current++ == 'I' &&
             *current++ == 'N' &&
             *current++ == 'T') {
 
-            while (*current == ' ') current++; // Eliminate whitespaces
-
-            if (*current == '(') current++;
-
-            while (*current == ' ') current++; // Eliminate whitespaces
-
-            double x = strtod(current, &end_double);
-            current = end_double;
-            double y = strtod(current, &end_double);
-            current = end_double;
-            double z = strtod(current, &end_double);
-            current = end_double;
-
-            while (*current == ' ') current++; // Eliminate whitespaces
-
-            if (*current == ')') {
-                bytes_t twkb = createHeader(POINT, precisionXY, false, false, false, true, false, precisionZ);
-                auto locations = encode(Vector3D(x, y, z), precisionXY, static_cast<signed char>(precisionZ));
-                append(twkb, locations);
-
-                this->data = move(vector<u_char>{make_move_iterator(twkb.begin()), make_move_iterator(twkb.end())});
-            }
-
+            readPoint(current, precisionXY, precisionZ);
+            return;
         }
+
+        current = begin;
+        if (*current++ == 'L' &&
+            *current++ == 'I' &&
+            *current++ == 'N' &&
+            *current++ == 'E' &&
+            *current++ == 'S' &&
+            *current++ == 'T' &&
+            *current++ == 'R' &&
+            *current++ == 'I' &&
+            *current++ == 'N' &&
+            *current++ == 'G') {
+
+            readLinestring(current, precisionXY, precisionZ);
+            return;
+        }
+
+
     } catch (exception ex) {
         cout << "Error: " << ex.what() << endl;
     }
