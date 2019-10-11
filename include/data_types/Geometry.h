@@ -89,8 +89,6 @@ namespace STREAM {
 
         void readPoint(const char *current, const signed char &precisionXY, const u_char &precisionZ);
 
-        void readMultipoint(const char *current, const signed char &precisionXY);
-
         void readLinestring(const char *current, const signed char &precisionXY);
 
         void readLinestring(const char *current, const signed char &precisionXY, const u_char &precisionZ);
@@ -98,6 +96,10 @@ namespace STREAM {
         void readPolygon(const char *current, const signed char &precisionXY);
 
         void readPolygon(const char *current, const signed char &precisionXY, const u_char &precisionZ);
+
+        void readMultipoint(const char *current, const signed char &precisionXY);
+
+        void readMultipoint(const char *current, const signed char &precisionXY, const u_char &precisionZ);
 
         static bytes_t encode(const double &value, const signed char &precision);
 
