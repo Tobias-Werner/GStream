@@ -51,6 +51,88 @@ void Geometry::readPoint(const char *current, const signed char &precisionXY) {
     }
 }
 
+void Geometry::readMultipoint(const char *current, const signed char &precisionXY, const u_char &precisionZ) {
+    char *end_double;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    if (*current == '(') current++;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    std::list<int32_t> coordinates;
+
+
+    while (true) {
+        double x = strtod(current, &end_double);
+        int32_t xShrinked = shrink(x, precisionXY);
+        coordinates.push_back(xShrinked); // x
+        current = end_double;
+
+        double y = strtod(current, &end_double);
+        int32_t yShrinked = shrink(y, precisionXY);
+        coordinates.push_back(yShrinked); // y
+        current = end_double;
+
+        double z = strtod(current, &end_double);
+        int32_t zShrinked = shrink(z, precisionZ);
+        coordinates.push_back(zShrinked); // z
+        current = end_double;
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current != ',') break;
+        else current++;
+    }
+
+    if (*current == ')') {
+        bytes_t twkb = createHeader(MULTIPOINT, precisionXY, false, false, false, true, false, precisionZ);
+
+        auto bytes = Geometry::encodeVarint(coordinates.size() / 3);
+        append(twkb, bytes);
+
+        auto it = coordinates.begin();
+        auto end = coordinates.end();
+
+        int32_t xPrev = 0;
+        int32_t yPrev = 0;
+        int32_t zPrev = 0;
+
+        while (true) {
+
+            auto x = *it++;
+            auto y = *it++;
+            auto z = *it++;
+
+            int32_t xDiff = x - xPrev;
+            int32_t yDiff = y - yPrev;
+            int32_t zDiff = z - zPrev;
+
+            auto zigZagX = encodeZigZag(xDiff);
+            auto zigZagY = encodeZigZag(yDiff);
+            auto zigZagZ = encodeZigZag(zDiff);
+
+            auto varintX = encodeVarint(zigZagX);
+            auto varintY = encodeVarint(zigZagY);
+            auto varintZ = encodeVarint(zigZagZ);
+
+            append(twkb, varintX);
+            append(twkb, varintY);
+            append(twkb, varintZ);
+
+            xPrev = x;
+            yPrev = y;
+            zPrev = z;
+
+            if (it == end)
+                break;
+        }
+
+        this->data = vector<u_char>{twkb.begin(), twkb.end()};
+
+    }
+}
+
+
 void Geometry::readMultipoint(const char *current, const signed char &precisionXY) {
 
     char *end_double;
@@ -488,11 +570,502 @@ Geometry::Geometry(const string &wkt_str, const signed char &precisionXY) {
             return;
         }
 
+        current = begin;
+        if (*current++ == 'M' &&
+            *current++ == 'U' &&
+            *current++ == 'L' &&
+            *current++ == 'T' &&
+            *current++ == 'I' &&
+            *current++ == 'L' &&
+            *current++ == 'I' &&
+            *current++ == 'N' &&
+            *current++ == 'E' &&
+            *current++ == 'S' &&
+            *current++ == 'T' &&
+            *current++ == 'R' &&
+            *current++ == 'I' &&
+            *current++ == 'N' &&
+            *current++ == 'G') {
+
+            readMultiLinestring(current, precisionXY);
+            return;
+        }
+
+        current = begin;
+        if (*current++ == 'M' &&
+            *current++ == 'U' &&
+            *current++ == 'L' &&
+            *current++ == 'T' &&
+            *current++ == 'I' &&
+            *current++ == 'P' &&
+            *current++ == 'O' &&
+            *current++ == 'L' &&
+            *current++ == 'Y' &&
+            *current++ == 'G' &&
+            *current++ == 'O' &&
+            *current++ == 'N') {
+
+            readMultiPolygon(current, precisionXY);
+            return;
+        }
+
 
     } catch (exception ex) {
         cout << "Error: " << ex.what() << endl;
     }
 
+}
+
+void Geometry::readMultiLinestring(const char *current, const signed char &precisionXY, const u_char &precisionZ) {
+    char *end_double;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    if (*current == '(') current++;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    std::list<std::list<int32_t >> lines;
+
+    // Iterate through lines
+    while (true) {
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current == '(') current++;
+        while (*current == ' ') current++; // Eliminate whitespaces
+
+        std::list<int32_t> coordinates;
+
+        // Iterate through coordinates
+        while (true) {
+            double x = strtod(current, &end_double);
+            int32_t xShrinked = shrink(x, precisionXY);
+            coordinates.push_back(xShrinked); // x
+            current = end_double;
+
+            double y = strtod(current, &end_double);
+            int32_t yShrinked = shrink(y, precisionXY);
+            coordinates.push_back(yShrinked); // y
+            current = end_double;
+
+            double z = strtod(current, &end_double);
+            int32_t zShrinked = shrink(z, precisionZ);
+            coordinates.push_back(zShrinked); // z
+            current = end_double;
+
+            while (*current == ' ') current++; // Eliminate whitespaces
+            if (*current != ',') break;
+            else current++;
+        }
+
+        lines.push_back(move(coordinates));
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current == ')') current++;
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current != ',') break;
+        else current++;
+    }
+
+
+    if (*current == ')') {
+        bytes_t twkb = createHeader(MULTILINESTRING, precisionXY, false, false, false, true, false, precisionZ);
+
+        auto nLines = Geometry::encodeVarint(lines.size());
+        append(twkb, nLines);
+
+        int32_t xPrev = 0;
+        int32_t yPrev = 0;
+        int32_t zPrev = 0;
+
+        for (auto &coordinates : lines) {
+
+            auto bytes = Geometry::encodeVarint(coordinates.size() / 3);
+            append(twkb, bytes);
+
+            auto it = coordinates.begin();
+            auto end = coordinates.end();
+
+            while (true) {
+
+                auto x = *it++;
+                auto y = *it++;
+                auto z = *it++;
+
+                int32_t xDiff = x - xPrev;
+                int32_t yDiff = y - yPrev;
+                int32_t zDiff = z - zPrev;
+
+                auto zigZagX = encodeZigZag(xDiff);
+                auto zigZagY = encodeZigZag(yDiff);
+                auto zigZagZ = encodeZigZag(zDiff);
+
+                auto varintX = encodeVarint(zigZagX);
+                auto varintY = encodeVarint(zigZagY);
+                auto varintZ = encodeVarint(zigZagZ);
+
+                append(twkb, varintX);
+                append(twkb, varintY);
+                append(twkb, varintZ);
+
+                xPrev = x;
+                yPrev = y;
+                zPrev = z;
+
+                if (it == end)
+                    break;
+            }
+        }
+
+        this->data = vector<u_char>{twkb.begin(), twkb.end()};
+
+    }
+}
+
+void Geometry::readMultiPolygon(const char *current, const signed char &precisionXY, const u_char &precisionZ) {
+    char *end_double;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    if (*current == '(') current++;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+
+    std::list<std::list<std::list<int32_t >>> polygons;
+
+    // Iterate through collection
+    while (true) {
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current == '(') current++;
+        while (*current == ' ') current++; // Eliminate whitespaces
+
+        std::list<std::list<int32_t >> rings;
+
+        // Iterate through rings
+        while (true) {
+            while (*current == ' ') current++; // Eliminate whitespaces
+            if (*current == '(') current++;
+            while (*current == ' ') current++; // Eliminate whitespaces
+
+            std::list<int32_t> coordinates;
+
+            // Iterate through coordinates
+            while (true) {
+                double x = strtod(current, &end_double);
+                int32_t xShrinked = shrink(x, precisionXY);
+                coordinates.push_back(xShrinked); // x
+                current = end_double;
+
+                double y = strtod(current, &end_double);
+                int32_t yShrinked = shrink(y, precisionXY);
+                coordinates.push_back(yShrinked); // y
+                current = end_double;
+
+                double z = strtod(current, &end_double);
+                int32_t zShrinked = shrink(z, precisionZ);
+                coordinates.push_back(zShrinked); // z
+                current = end_double;
+
+                while (*current == ' ') current++; // Eliminate whitespaces
+                if (*current != ',') break;
+                else current++;
+            }
+
+            rings.push_back(move(coordinates));
+
+            while (*current == ' ') current++; // Eliminate whitespaces
+            if (*current == ')') current++;
+
+            while (*current == ' ') current++; // Eliminate whitespaces
+            if (*current != ',') break;
+            else current++;
+        }
+
+
+        polygons.push_back(rings);
+
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current == ')') current++;
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current != ',') break;
+        else current++;
+    }
+
+
+    if (*current == ')') {
+        bytes_t twkb = createHeader(MULTIPOLYGON, precisionXY, false, false, false, true, false, precisionZ);
+
+        int32_t xPrev = 0;
+        int32_t yPrev = 0;
+        int32_t zPrev = 0;
+
+        auto nPolygons = Geometry::encodeVarint(polygons.size());
+        append(twkb, nPolygons);
+
+        for (auto &rings : polygons) {
+
+            auto nRings = Geometry::encodeVarint(rings.size());
+            append(twkb, nRings);
+
+            for (auto &coordinates : rings) {
+
+                auto bytes = Geometry::encodeVarint(coordinates.size() / 3);
+                append(twkb, bytes);
+
+                auto it = coordinates.begin();
+                auto end = coordinates.end();
+
+                while (true) {
+
+                    auto x = *it++;
+                    auto y = *it++;
+                    auto z = *it++;
+
+                    int32_t xDiff = x - xPrev;
+                    int32_t yDiff = y - yPrev;
+                    int32_t zDiff = z - zPrev;
+
+                    auto zigZagX = encodeZigZag(xDiff);
+                    auto zigZagY = encodeZigZag(yDiff);
+                    auto zigZagZ = encodeZigZag(zDiff);
+
+                    auto varintX = encodeVarint(zigZagX);
+                    auto varintY = encodeVarint(zigZagY);
+                    auto varintZ = encodeVarint(zigZagZ);
+
+                    append(twkb, varintX);
+                    append(twkb, varintY);
+                    append(twkb, varintZ);
+
+                    xPrev = x;
+                    yPrev = y;
+                    zPrev = z;
+
+                    if (it == end)
+                        break;
+                }
+            }
+        }
+        this->data = vector<u_char>{twkb.begin(), twkb.end()};
+
+    }
+}
+
+void Geometry::readMultiPolygon(const char *current, const signed char &precisionXY) {
+    char *end_double;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    if (*current == '(') current++;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+
+    std::list<std::list<std::list<int32_t >>> polygons;
+
+    // Iterate through collection
+    while (true) {
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current == '(') current++;
+        while (*current == ' ') current++; // Eliminate whitespaces
+
+        std::list<std::list<int32_t >> rings;
+
+        // Iterate through rings
+        while (true) {
+            while (*current == ' ') current++; // Eliminate whitespaces
+            if (*current == '(') current++;
+            while (*current == ' ') current++; // Eliminate whitespaces
+
+            std::list<int32_t> coordinates;
+
+            // Iterate through coordinates
+            while (true) {
+                double x = strtod(current, &end_double);
+                int32_t xShrinked = shrink(x, precisionXY);
+                coordinates.push_back(xShrinked); // x
+
+                current = end_double;
+                double y = strtod(current, &end_double);
+                int32_t yShrinked = shrink(y, precisionXY);
+                coordinates.push_back(yShrinked); // y
+                current = end_double;
+
+                while (*current == ' ') current++; // Eliminate whitespaces
+                if (*current != ',') break;
+                else current++;
+            }
+
+            rings.push_back(move(coordinates));
+
+            while (*current == ' ') current++; // Eliminate whitespaces
+            if (*current == ')') current++;
+
+            while (*current == ' ') current++; // Eliminate whitespaces
+            if (*current != ',') break;
+            else current++;
+        }
+
+
+        polygons.push_back(rings);
+
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current == ')') current++;
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current != ',') break;
+        else current++;
+    }
+
+
+    if (*current == ')') {
+        bytes_t twkb = createHeader(MULTIPOLYGON, precisionXY, false, false, false, false, false);
+
+        int32_t xPrev = 0;
+        int32_t yPrev = 0;
+
+        auto nPolygons = Geometry::encodeVarint(polygons.size());
+        append(twkb, nPolygons);
+
+        for (auto &rings : polygons) {
+
+            auto nRings = Geometry::encodeVarint(rings.size());
+            append(twkb, nRings);
+
+            for (auto &coordinates : rings) {
+
+                auto bytes = Geometry::encodeVarint(coordinates.size() / 2);
+                append(twkb, bytes);
+
+                auto it = coordinates.begin();
+                auto end = coordinates.end();
+
+                while (true) {
+
+                    auto x = *it++;
+                    auto y = *it++;
+
+                    int32_t xDiff = x - xPrev;
+                    int32_t yDiff = y - yPrev;
+
+                    auto zigZagX = encodeZigZag(xDiff);
+                    auto zigZagY = encodeZigZag(yDiff);
+
+                    auto varintX = encodeVarint(zigZagX);
+                    auto varintY = encodeVarint(zigZagY);
+
+                    append(twkb, varintX);
+                    append(twkb, varintY);
+
+                    xPrev = x;
+                    yPrev = y;
+
+                    if (it == end)
+                        break;
+                }
+            }
+        }
+        this->data = vector<u_char>{twkb.begin(), twkb.end()};
+
+    }
+}
+
+void Geometry::readMultiLinestring(const char *current, const signed char &precisionXY) {
+    char *end_double;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    if (*current == '(') current++;
+
+    while (*current == ' ') current++; // Eliminate whitespaces
+
+    std::list<std::list<int32_t >> lines;
+
+    // Iterate through lines
+    while (true) {
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current == '(') current++;
+        while (*current == ' ') current++; // Eliminate whitespaces
+
+        std::list<int32_t> coordinates;
+
+        // Iterate through coordinates
+        while (true) {
+            double x = strtod(current, &end_double);
+            int32_t xShrinked = shrink(x, precisionXY);
+            coordinates.push_back(xShrinked); // x
+
+            current = end_double;
+            double y = strtod(current, &end_double);
+            int32_t yShrinked = shrink(y, precisionXY);
+            coordinates.push_back(yShrinked); // y
+            current = end_double;
+
+            while (*current == ' ') current++; // Eliminate whitespaces
+            if (*current != ',') break;
+            else current++;
+        }
+
+        lines.push_back(move(coordinates));
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current == ')') current++;
+
+        while (*current == ' ') current++; // Eliminate whitespaces
+        if (*current != ',') break;
+        else current++;
+    }
+
+
+    if (*current == ')') {
+        bytes_t twkb = createHeader(MULTILINESTRING, precisionXY, false, false, false, false, false);
+
+        auto nLines = Geometry::encodeVarint(lines.size());
+        append(twkb, nLines);
+
+        int32_t xPrev = 0;
+        int32_t yPrev = 0;
+
+        for (auto &coordinates : lines) {
+
+            auto bytes = Geometry::encodeVarint(coordinates.size() / 2);
+            append(twkb, bytes);
+
+            auto it = coordinates.begin();
+            auto end = coordinates.end();
+
+            while (true) {
+
+                auto x = *it++;
+                auto y = *it++;
+
+                int32_t xDiff = x - xPrev;
+                int32_t yDiff = y - yPrev;
+
+                auto zigZagX = encodeZigZag(xDiff);
+                auto zigZagY = encodeZigZag(yDiff);
+
+                auto varintX = encodeVarint(zigZagX);
+                auto varintY = encodeVarint(zigZagY);
+
+                append(twkb, varintX);
+                append(twkb, varintY);
+
+                xPrev = x;
+                yPrev = y;
+
+                if (it == end)
+                    break;
+            }
+        }
+
+        this->data = vector<u_char>{twkb.begin(), twkb.end()};
+
+    }
 }
 
 void Geometry::readPoint(const char *current, const signed char &precisionXY, const u_char &precisionZ) {
@@ -650,6 +1223,60 @@ Geometry::Geometry(const string &wkt_str, const signed char &precisionXY, const 
             return;
         }
 
+        current = begin;
+        if (*current++ == 'M' &&
+            *current++ == 'U' &&
+            *current++ == 'L' &&
+            *current++ == 'T' &&
+            *current++ == 'I' &&
+            *current++ == 'P' &&
+            *current++ == 'O' &&
+            *current++ == 'I' &&
+            *current++ == 'N' &&
+            *current++ == 'T') {
+
+            readMultipoint(current, precisionXY, precisionZ);
+            return;
+        }
+
+        current = begin;
+        if (*current++ == 'M' &&
+            *current++ == 'U' &&
+            *current++ == 'L' &&
+            *current++ == 'T' &&
+            *current++ == 'I' &&
+            *current++ == 'L' &&
+            *current++ == 'I' &&
+            *current++ == 'N' &&
+            *current++ == 'E' &&
+            *current++ == 'S' &&
+            *current++ == 'T' &&
+            *current++ == 'R' &&
+            *current++ == 'I' &&
+            *current++ == 'N' &&
+            *current++ == 'G') {
+
+            readMultiLinestring(current, precisionXY, precisionZ);
+            return;
+        }
+
+        current = begin;
+        if (*current++ == 'M' &&
+            *current++ == 'U' &&
+            *current++ == 'L' &&
+            *current++ == 'T' &&
+            *current++ == 'I' &&
+            *current++ == 'P' &&
+            *current++ == 'O' &&
+            *current++ == 'L' &&
+            *current++ == 'Y' &&
+            *current++ == 'G' &&
+            *current++ == 'O' &&
+            *current++ == 'N') {
+
+            readMultiPolygon(current, precisionXY, precisionZ);
+            return;
+        }
 
     } catch (exception ex) {
         cout << "Error: " << ex.what() << endl;
@@ -972,6 +1599,27 @@ string Geometry::asWKT() {
                     // Z dimension
                     if (*bytePtr & 0x01) {
 
+                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
+
+                        bytePtr++;
+
+                        auto numPoints = readUnsignedInt(bytePtr);
+
+                        double x = readDouble(bytePtr, precisionXY);
+                        double y = readDouble(bytePtr, precisionXY);
+                        double z = readDouble(bytePtr, precisionZ);
+
+                        stream << setprecision(precisionXY) << fixed << x << " " << y << " " << setprecision(precisionZ)
+                               << z;
+
+                        for (size_t i = 1; i < numPoints; i++) {
+                            x += readDouble(bytePtr, precisionXY);
+                            y += readDouble(bytePtr, precisionXY);
+                            z += readDouble(bytePtr, precisionZ);
+
+                            stream << setprecision(precisionXY) << fixed << "," << x << " " << y << " "
+                                   << setprecision(precisionZ) << z;
+                        }
 
                     }
 
@@ -998,6 +1646,242 @@ string Geometry::asWKT() {
 
                 }
 
+                stream << ")";
+
+                break;
+            }
+
+            case MULTILINESTRING: {
+                stream << "MULTILINESTRING (";
+
+                if (extendedDimensions) {
+
+                    // Z dimension
+                    if (*bytePtr & 0x01) {
+                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
+
+                        bytePtr++;
+
+                        auto numLines = readUnsignedInt(bytePtr);
+
+                        double x = 0;
+                        double y = 0;
+                        double z = 0;
+
+                        for (size_t i = 0; i < numLines; i++) {
+                            stream << "(";
+
+                            auto numPoints = readUnsignedInt(bytePtr);
+
+                            for (size_t j = 0; j < numPoints; j++) {
+                                x += readDouble(bytePtr, precisionXY);
+                                y += readDouble(bytePtr, precisionXY);
+                                z += readDouble(bytePtr, precisionZ);
+
+                                stream << setprecision(precisionXY) << fixed << x << " " << y << " "
+                                       << setprecision(precisionZ) << z;
+
+                                if (j < numPoints - 1)
+                                    stream << ", ";
+                            }
+
+                            stream << ")";
+                            if (i < numLines - 1)
+                                stream << ", ";
+                        }
+                    }
+
+                    // Z and T dimension
+                    if (*bytePtr & 0x02) {
+//                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
+//                        auto precisionT = (*bytePtr & 0xE0) >> 5;
+//
+//                        bytePtr++;
+//
+//                        auto numRings = readUnsignedInt(bytePtr);
+//
+//                        double x = 0;
+//                        double y = 0;
+//                        double z = 0;
+//                        double t = 0;
+//
+//                        for (size_t i = 0; i < numRings; i++) {
+//                            stream << "(";
+//
+//                            auto numPoints = readUnsignedInt(bytePtr);
+//
+//                            for (size_t i = 0; i < numPoints; i++) {
+//                                x += readDouble(bytePtr, precisionXY);
+//                                y += readDouble(bytePtr, precisionXY);
+//                                z += readDouble(bytePtr, precisionZ);
+//                                t += readDouble(bytePtr, precisionT);
+//
+//                                stream << setprecision(precisionXY) << fixed << x << " " << y << " "
+//                                       << setprecision(precisionZ) << z << setprecision(precisionT) << " " << t;
+//
+//                                if (i < numPoints - 1)
+//                                    stream << ", ";
+//                            }
+//
+//                            stream << ")";
+//                            if (i < numRings - 1)
+//                                stream << ", ";
+//                        }
+                    }
+
+                } else {
+
+                    auto numLines = readUnsignedInt(bytePtr);
+
+                    double x = 0;
+                    double y = 0;
+
+                    for (size_t i = 0; i < numLines; i++) {
+                        stream << "(";
+
+                        auto numPoints = readUnsignedInt(bytePtr);
+
+                        for (size_t i = 0; i < numPoints; i++) {
+                            x += readDouble(bytePtr, precisionXY);
+                            y += readDouble(bytePtr, precisionXY);
+
+                            stream << setprecision(precisionXY) << fixed << x << " " << y;
+                            if (i < numPoints - 1)
+                                stream << ", ";
+                        }
+
+                        stream << ")";
+                        if (i < numLines - 1)
+                            stream << ", ";
+                    }
+                }
+                stream << ")";
+
+                break;
+            }
+
+            case MULTIPOLYGON: {
+                stream << "MULTIPOLYGON (";
+
+                if (extendedDimensions) {
+
+                    // Z dimension
+                    if (*bytePtr & 0x01) {
+                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
+
+                        bytePtr++;
+
+                        double x = 0;
+                        double y = 0;
+                        double z = 0;
+
+                        auto numPolygons = readUnsignedInt(bytePtr);
+
+                        for (size_t k = 0; k < numPolygons; k++) {
+                            stream << "(";
+
+                            auto numRings = readUnsignedInt(bytePtr);
+
+                            for (size_t i = 0; i < numRings; i++) {
+                                stream << "(";
+
+                                auto numPoints = readUnsignedInt(bytePtr);
+
+                                for (size_t j = 0; j < numPoints; j++) {
+                                    x += readDouble(bytePtr, precisionXY);
+                                    y += readDouble(bytePtr, precisionXY);
+                                    z += readDouble(bytePtr, precisionZ);
+
+                                    stream << setprecision(precisionXY) << fixed << x << " " << y << " "
+                                           << setprecision(precisionZ) << z;
+
+                                    if (j < numPoints - 1)
+                                        stream << ", ";
+                                }
+
+                                stream << ")";
+                                if (i < numRings - 1)
+                                    stream << ", ";
+                            }
+                        }
+                    }
+
+                    // Z and T dimension
+                    if (*bytePtr & 0x02) {
+//                        auto precisionZ = (*bytePtr & 0x1C) >> 2;
+//                        auto precisionT = (*bytePtr & 0xE0) >> 5;
+//
+//                        bytePtr++;
+//
+//                        auto numRings = readUnsignedInt(bytePtr);
+//
+//                        double x = 0;
+//                        double y = 0;
+//                        double z = 0;
+//                        double t = 0;
+//
+//                        for (size_t i = 0; i < numRings; i++) {
+//                            stream << "(";
+//
+//                            auto numPoints = readUnsignedInt(bytePtr);
+//
+//                            for (size_t i = 0; i < numPoints; i++) {
+//                                x += readDouble(bytePtr, precisionXY);
+//                                y += readDouble(bytePtr, precisionXY);
+//                                z += readDouble(bytePtr, precisionZ);
+//                                t += readDouble(bytePtr, precisionT);
+//
+//                                stream << setprecision(precisionXY) << fixed << x << " " << y << " "
+//                                       << setprecision(precisionZ) << z << setprecision(precisionT) << " " << t;
+//
+//                                if (i < numPoints - 1)
+//                                    stream << ", ";
+//                            }
+//
+//                            stream << ")";
+//                            if (i < numRings - 1)
+//                                stream << ", ";
+//                        }
+                    }
+
+                } else {
+
+                    auto numPolygons = readUnsignedInt(bytePtr);
+
+                    double x = 0;
+                    double y = 0;
+
+                    for (size_t k = 0; k < numPolygons; k++) {
+                        stream << "(";
+                        auto numRings = readUnsignedInt(bytePtr);
+
+                        for (size_t j = 0; j < numRings; j++) {
+                            stream << "(";
+
+                            auto numPoints = readUnsignedInt(bytePtr);
+
+                            for (size_t i = 0; i < numPoints; i++) {
+                                x += readDouble(bytePtr, precisionXY);
+                                y += readDouble(bytePtr, precisionXY);
+
+                                stream << setprecision(precisionXY) << fixed << x << " " << y;
+                                if (i < numPoints - 1)
+                                    stream << ", ";
+                            }
+
+                            stream << ")";
+                            if (j < numRings - 1)
+                                stream << ", ";
+                        }
+
+                        stream << ")";
+                        if (k < numPolygons - 1)
+                            stream << ", ";
+
+                    }
+
+
+                }
                 stream << ")";
 
                 break;
