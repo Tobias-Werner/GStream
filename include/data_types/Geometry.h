@@ -109,6 +109,10 @@ namespace STREAM {
 
         void readMultiLinestring(const char *current, const signed char &precisionXY, const u_char &precisionZ);
 
+        void readMultiPolygon(const char *current, const signed char &precisionXY);
+
+        void readMultiPolygon(const char *current, const signed char &precisionXY, const u_char &precisionZ);
+
         static bytes_t encode(const double &value, const signed char &precision);
 
         static void append(bytes_t &twkb);
