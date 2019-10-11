@@ -19,7 +19,11 @@ namespace STREAM {
         POINT = 0x01,
         LINESTRING = 0x02,
         POLYGON = 0x03,
-        MULTIPOINT = 0x04
+        MULTIPOINT = 0x04,
+        MULTILINESTRING = 0x05,
+        MULTIPOLYGON = 0x06,
+        GEOMETRYCOLLECTION = 0x07
+
     };
 
     class Vector2D {
@@ -100,6 +104,10 @@ namespace STREAM {
         void readMultipoint(const char *current, const signed char &precisionXY);
 
         void readMultipoint(const char *current, const signed char &precisionXY, const u_char &precisionZ);
+
+        void readMultiLinestring(const char *current, const signed char &precisionXY);
+
+        void readMultiLinestring(const char *current, const signed char &precisionXY, const u_char &precisionZ);
 
         static bytes_t encode(const double &value, const signed char &precision);
 
