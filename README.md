@@ -56,14 +56,26 @@ The following window types can be used in a stream view.
 
 #### Encoding of Geometries
 
-Encoding and decoding of geometries can be done by two functions.
+Encoding and decoding of geometries can be done by three functions.
 ```
--- Encoding geometry (converting from WKT to TWKB)
-geomFromWKT('<geometry-as-WKT>', <precision>))
+-- Encoding 2d geometry (converting from WKT to TWKB)
+geomFromWKT('<geometry-as-WKT>', <precisionXY>))
+
+-- Encoding 3d geometry (converting from WKT to TWKB)
+geomFromWKT('<geometry-as-WKT>', <precisionXY>, <precisionZ>))
 
 -- Decoding geometry (converting from TWKB to WKT)
 asWKT(<geometry-column>)
 ``` 
+
+The following geometry types (2d and 3d) are available.
+
+* Point
+* Linestring
+* Polygon
+* Multipoint
+* Multilinestring
+* Multipolygon
 
 ### Minimal example
 
