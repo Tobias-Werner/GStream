@@ -21,6 +21,7 @@
 #include "windows/WaypointWindow.h"
 #include "windows/SessionDistanceWindow.h"
 #include "windows/JumpingDistanceWindow.h"
+#include "windows/AreaWindow.h"
 #include "AOperator.h"
 #include "Input.h"
 #include "Join.h"

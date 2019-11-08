@@ -2096,13 +2096,13 @@ void Geometry::LatLon2XYZ(const double &lat, const double &lon, double &x, doubl
 double Geometry::getDistance(Geometry *geom, Geometry *other) {
     int type1, type2;
     int dimension1, dimension2;
-    int precision1, precision2;
+    int precisionXY1, precisionXY2;
 
     vector<u_char>::iterator it1;
     vector<u_char>::iterator it2;
 
-    geom->readMetadata(it1, type1, dimension1, precision1);
-    other->readMetadata(it2, type2, dimension2, precision2);
+    geom->readMetadata(it1, type1, dimension1, precisionXY1);
+    other->readMetadata(it2, type2, dimension2, precisionXY2);
 
     if (dimension1 != dimension2 || type1 != type2) {
         // Error Handling
@@ -2114,12 +2114,21 @@ double Geometry::getDistance(Geometry *geom, Geometry *other) {
                 switch (type1) {
                     case POINT : {
 
-                        double lon1 = geom->readDouble(it1, precision1);
-                        double lat1 = geom->readDouble(it1, precision1);
-                        double lon2 = other->readDouble(it2, precision2);
-                        double lat2 = other->readDouble(it2, precision2);
+                        it1++;
+                        it2++;
 
-                        double distance = haversine(lat1, lon1, lat2, lon2);
+                        double x1 = geom->readDouble(it1, precisionXY1);
+                        double y1 = geom->readDouble(it1, precisionXY1);
+                        double x2 = other->readDouble(it2, precisionXY2);
+                        double y2 = other->readDouble(it2, precisionXY2);
+
+                        //double distance = haversine(lat1, lon1, lat2, lon2);
+
+                        double diffX = x2 - x1;
+                        double diffY = y2 - y1;
+
+                        double squaredDiffs = diffX * diffX + diffY * diffY;
+                        double distance = sqrt(squaredDiffs);
 
                         return distance;
 
@@ -2136,6 +2145,43 @@ double Geometry::getDistance(Geometry *geom, Geometry *other) {
             }
 
             case 3 :
+
+                switch (type1) {
+                    case POINT : {
+
+
+                        auto precisionZ1 = (*it1 & 0x1C) >> 2;
+                        it1++;
+                        double x1 = geom->readDouble(it1, precisionXY1);
+                        double y1 = geom->readDouble(it1, precisionXY1);
+                        double z1 = geom->readDouble(it1, precisionZ1);
+
+                        auto precisionZ2 = (*it2 & 0x1C) >> 2;
+                        it2++;
+                        double x2 = other->readDouble(it2, precisionXY2);
+                        double y2 = other->readDouble(it2, precisionXY2);
+                        double z2 = other->readDouble(it2, precisionZ2);
+
+                        double diffX = x1 - x2;
+                        double diffY = y1 - y2;
+                        double diffZ = z1 - z2;
+                        double squaredDiffs = diffX * diffX + diffY * diffY + diffZ * diffZ;
+                        double distance = sqrt(squaredDiffs);
+
+                        return distance;
+
+                    }
+                    case LINESTRING: {
+
+                        break;
+                    }
+                    case POLYGON: {
+
+                        break;
+                    }
+                }
+
+
                 break;
             case 4 :
                 break;
@@ -2153,6 +2199,44 @@ void Geometry::result(AResultHandler &result_handler) {
 unique_ptr<ADataType> Geometry::copy() {
     return make_unique<Geometry>(*this);
 }
+
+bool Geometry::pointInRectangle(const std::list<double> &mins, const std::list<double> &maxs, Geometry *point) {
+
+    int type, dimension;
+    list<double> coordinates;
+
+    point->readMetadataAndCoordinates(type, dimension, coordinates);
+
+    if (type == POINT)
+
+        switch (mins.size()) {
+            case 2: {
+
+                auto minIt = mins.begin();
+                auto maxIt = maxs.begin();
+                auto coord = coordinates.begin();
+
+                while (coord != coordinates.end()) {
+                    double c = *coord;
+                    double max = *maxIt;
+                    double min = *minIt;
+
+                    if (*coord > *maxIt || *coord < *minIt)
+                        return false;
+
+                    maxIt++;
+                    minIt++;
+                    coord++;
+                }
+
+                return true;
+
+            }
+            default:
+                return false;
+        }
+}
+
 
 // geom: multipoint
 // other: point
@@ -2220,9 +2304,6 @@ void Geometry::readMetadata(vector<u_char>::iterator &iterator, int &type, int &
 
     iterator++;
     dimension = (!(*iterator & 0x08)) ? 2 : (*(++iterator) & 0x02) ? 4 : 3;
-
-    iterator++;
-
 }
 
 void Geometry::readCoordinates(vector<u_char>::iterator &iterator, int &type, int &dimension, int &precision,

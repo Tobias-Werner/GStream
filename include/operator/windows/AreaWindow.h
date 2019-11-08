@@ -6,6 +6,8 @@
 #define STREAMS_AREAWINDOW_H
 
 #include "operator/windows/ASpatialWindow.h"
+#include <data_types/Geometry.h>
+#include <list>
 
 namespace STREAM {
 
@@ -13,12 +15,12 @@ namespace STREAM {
 
     private:
 
-        STREAM::Geometry waypoints;
-        bool prevOverlaped;
+        std::list<double> mins;
+        std::list<double> maxs;
 
     public:
 
-        AreaWindow(const std::string &wkt, std::string &geomColumnName);
+        AreaWindow(const std::string &minPointWKT, const std::string &maxPointWKT, std::string &geomColumnName);
 
         virtual void onDataUpdate() override;
 

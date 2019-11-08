@@ -97,22 +97,22 @@
 #endif
 /************* Begin control #defines *****************************************/
 #define YYCODETYPE unsigned char
-#define YYNOCODE 63
+#define YYNOCODE 64
 #define YYACTIONTYPE unsigned char
 #define ParseTOKENTYPE STREAM::token*
 typedef union {
   int yyinit;
   ParseTOKENTYPE yy0;
+  STREAM::AOperator* yy4;
   std::list<STREAM::Attribute>* yy8;
-  STREAM::AOperator* yy44;
-  STREAM::View* yy62;
-  STREAM::ETypes yy73;
-  std::list<STREAM::ACondition>* yy74;
-  STREAM::AAggregation* yy80;
-  STREAM::ACondition* yy81;
-  std::list<std::string*>* yy94;
-  STREAM::AWindow* yy112;
-  STREAM::Attribute* yy119;
+  STREAM::AAggregation* yy16;
+  STREAM::ACondition* yy23;
+  STREAM::View* yy46;
+  STREAM::Attribute* yy47;
+  std::list<std::string*>* yy52;
+  STREAM::ETypes yy55;
+  STREAM::AWindow* yy56;
+  std::list<STREAM::ACondition>* yy108;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
@@ -127,17 +127,17 @@ typedef union {
 #define ParseCTX_PARAM
 #define ParseCTX_FETCH
 #define ParseCTX_STORE
-#define YYNSTATE             74
-#define YYNRULE              47
-#define YYNTOKEN             45
-#define YY_MAX_SHIFT         73
-#define YY_MIN_SHIFTREDUCE   117
-#define YY_MAX_SHIFTREDUCE   163
-#define YY_ERROR_ACTION      164
-#define YY_ACCEPT_ACTION     165
-#define YY_NO_ACTION         166
-#define YY_MIN_REDUCE        167
-#define YY_MAX_REDUCE        213
+#define YYNSTATE             79
+#define YYNRULE              48
+#define YYNTOKEN             46
+#define YY_MAX_SHIFT         78
+#define YY_MIN_SHIFTREDUCE   123
+#define YY_MAX_SHIFTREDUCE   170
+#define YY_ERROR_ACTION      171
+#define YY_ACCEPT_ACTION     172
+#define YY_NO_ACTION         173
+#define YY_MIN_REDUCE        174
+#define YY_MAX_REDUCE        221
 /************* End control #defines *******************************************/
 #define YY_NLOOKAHEAD ((int)(sizeof(yy_lookahead)/sizeof(yy_lookahead[0])))
 
@@ -204,71 +204,72 @@ typedef union {
 **  yy_default[]       Default action for each state.
 **
 *********** Begin parsing tables **********************************************/
-#define YY_ACTTAB_COUNT (129)
+#define YY_ACTTAB_COUNT (132)
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */    18,   14,  165,   73,   73,   73,   28,    9,  183,   38,
- /*    10 */    21,   21,   16,    8,  172,   25,   23,   15,   20,   24,
- /*    20 */   183,   22,   54,  160,   50,   45,  131,  159,    8,   33,
- /*    30 */   161,  213,  141,  142,  143,  144,  145,  146,  183,   27,
- /*    40 */     8,   37,   35,  212,   30,    6,    5,   60,   10,   66,
- /*    50 */     2,   58,   71,   64,  185,    9,  117,  207,   68,  168,
- /*    60 */    34,   36,   69,  190,  169,   20,   19,  137,   26,   39,
- /*    70 */    40,   11,    1,  149,  150,  151,  152,  153,   19,   17,
- /*    80 */     3,   29,  182,    4,   31,   32,  148,   12,  147,   13,
- /*    90 */    19,  123,  138,   41,  130,   46,  166,   51,   42,   43,
- /*   100 */    44,  129,   47,   48,   49,   55,   52,   56,   53,  128,
- /*   110 */    61,  166,  127,   62,   67,  136,   57,  125,   59,  120,
- /*   120 */   126,    7,   70,   65,   63,  124,  204,  166,   72,
+ /*     0 */    18,   14,  172,   78,   78,   78,  215,    9,  191,   38,
+ /*    10 */    21,   21,    8,    9,  179,   23,   15,   28,  175,  167,
+ /*    20 */   191,   22,    8,  166,    8,  221,  168,  220,  191,   27,
+ /*    30 */   193,  138,   30,  148,  149,  150,  151,  152,  153,    6,
+ /*    40 */     5,   33,   37,   35,   16,  123,    2,   65,   71,   25,
+ /*    50 */    20,   63,   69,   24,   10,   19,   59,   76,   55,   50,
+ /*    60 */    45,   34,   36,   73,   74,  198,   20,   40,   19,  176,
+ /*    70 */   144,   26,   39,   11,    1,  156,  157,  158,  159,  160,
+ /*    80 */     3,    4,   31,   17,  190,   29,   32,  155,  154,  129,
+ /*    90 */    12,   19,   13,  145,   41,   42,   43,  137,   46,  136,
+ /*   100 */    47,   51,   49,   44,   48,  135,   52,   56,   57,   60,
+ /*   110 */    61,   53,   54,  134,   66,  212,  133,   58,   72,   67,
+ /*   120 */    64,   62,  126,  131,  132,  143,  130,    7,   68,   70,
+ /*   130 */    75,   77,
 };
 static const YYCODETYPE yy_lookahead[] = {
- /*     0 */    54,   49,   56,   57,   58,   59,    2,    4,   47,   48,
- /*    10 */    61,   62,    7,   47,   53,   14,   50,   51,   13,   18,
- /*    20 */    47,   48,   21,   15,   23,   24,    6,   19,   47,   25,
- /*    30 */    22,   50,   32,   33,   34,   35,   36,   37,   47,   48,
- /*    40 */    47,   38,   39,   50,    6,   30,   31,   15,   28,   15,
- /*    50 */     8,   19,    3,   19,   45,    4,    6,   62,    9,   52,
- /*    60 */    47,   47,   29,   47,   52,   13,   28,    4,   46,   12,
- /*    70 */    28,   60,   11,   40,   41,   42,   43,   44,   28,   55,
- /*    80 */     5,   27,   47,    5,    4,   26,   17,   13,   17,   13,
- /*    90 */    28,    4,    4,    4,   17,    4,   63,    4,    8,   20,
- /*   100 */    19,   17,    8,   20,   19,    4,    8,    8,   22,   17,
- /*   110 */     4,   63,   17,    8,    4,    4,   20,   17,   16,   10,
- /*   120 */    17,    5,    4,   16,   20,   17,    0,   63,    1,   63,
- /*   130 */    63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
- /*   140 */    63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
- /*   150 */    63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
- /*   160 */    63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
- /*   170 */    63,   63,   63,   63,
+ /*     0 */    55,   50,   57,   58,   59,   60,   63,    4,   48,   49,
+ /*    10 */    62,   63,   48,    4,   54,   51,   52,    2,   53,   15,
+ /*    20 */    48,   49,   48,   19,   48,   51,   22,   51,   48,   49,
+ /*    30 */    46,    6,    6,   33,   34,   35,   36,   37,   38,   31,
+ /*    40 */    32,   26,   39,   40,    7,    6,    8,   15,   15,   14,
+ /*    50 */    13,   19,   19,   18,   29,   29,   21,    3,   23,   24,
+ /*    60 */    25,   48,   48,    9,   30,   48,   13,   29,   29,   53,
+ /*    70 */     4,   47,   12,   61,   11,   41,   42,   43,   44,   45,
+ /*    80 */     5,    5,    4,   56,   48,   28,   27,   17,   17,    4,
+ /*    90 */    13,   29,   13,    4,    4,    8,   22,   17,    4,   17,
+ /*   100 */     8,    4,   19,   22,   20,   17,    8,    4,    8,    4,
+ /*   110 */     8,   20,   19,   17,    4,    0,   17,   22,    4,    8,
+ /*   120 */    16,   20,   10,   17,   17,    4,   17,    5,   20,   16,
+ /*   130 */     4,    1,   64,   64,   64,   64,   64,   64,   64,   64,
+ /*   140 */    64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+ /*   150 */    64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+ /*   160 */    64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+ /*   170 */    64,   64,   64,   64,   64,   64,   64,   64,
 };
-#define YY_SHIFT_COUNT    (73)
+#define YY_SHIFT_COUNT    (78)
 #define YY_SHIFT_MIN      (0)
-#define YY_SHIFT_MAX      (127)
+#define YY_SHIFT_MAX      (130)
 static const unsigned char yy_shift_ofst[] = {
- /*     0 */     4,    3,   51,    8,   51,   51,   51,   51,    0,   33,
- /*    10 */     8,    5,   51,   51,   51,   52,   63,   57,   61,   51,
- /*    20 */     1,   20,   38,   15,   32,   34,   42,   50,   49,   75,
- /*    30 */    54,   78,   80,   59,   69,   74,   71,   76,   62,   87,
- /*    40 */    88,   77,   89,   90,   79,   81,   84,   91,   94,   83,
- /*    50 */    85,   92,   93,   98,   86,   95,  101,   99,   96,  100,
- /*    60 */   102,  103,  106,  105,  104,  108,  107,  109,  110,  111,
- /*    70 */   116,  118,  126,  127,
+ /*     0 */    15,    3,    9,    4,    9,    9,    9,    9,    0,   34,
+ /*    10 */     4,   37,    9,    9,    9,   53,   66,   60,   63,    9,
+ /*    20 */    35,   25,   26,    8,   32,   33,   38,   39,   54,   75,
+ /*    30 */    57,   76,   78,   59,   70,   77,   71,   79,   62,   85,
+ /*    40 */    89,   80,   90,   87,   74,   81,   82,   94,   92,   84,
+ /*    50 */    83,   88,   97,   98,   91,   93,   96,  103,  100,   95,
+ /*    60 */    99,  105,  102,  101,  106,  104,  107,  110,  111,  108,
+ /*    70 */   109,  113,  112,  114,  121,  122,  126,  115,  130,
 };
 #define YY_REDUCE_COUNT (19)
-#define YY_REDUCE_MIN   (-54)
-#define YY_REDUCE_MAX   (35)
+#define YY_REDUCE_MIN   (-57)
+#define YY_REDUCE_MAX   (36)
 static const signed char yy_reduce_ofst[] = {
- /*     0 */   -54,  -39,  -34,  -51,  -27,  -19,   -7,   -9,  -48,    9,
- /*    10 */    -5,    7,   13,   14,   16,   12,   22,   11,   24,   35,
+ /*     0 */   -55,  -40,  -36,  -52,  -28,  -26,  -24,  -20,  -49,  -16,
+ /*    10 */   -57,  -35,   13,   14,   17,   16,   24,   12,   27,   36,
 };
 static const YYACTIONTYPE yy_default[] = {
- /*     0 */   164,  164,  164,  164,  164,  164,  164,  164,  164,  184,
- /*    10 */   164,  164,  164,  164,  164,  164,  164,  164,  164,  164,
- /*    20 */   164,  164,  164,  189,  164,  164,  164,  164,  164,  164,
- /*    30 */   164,  164,  164,  164,  164,  164,  164,  164,  171,  164,
- /*    40 */   164,  164,  164,  164,  164,  164,  164,  164,  164,  164,
- /*    50 */   164,  164,  164,  164,  164,  164,  164,  164,  164,  164,
- /*    60 */   164,  164,  164,  164,  164,  164,  164,  164,  164,  164,
- /*    70 */   164,  164,  164,  164,
+ /*     0 */   171,  171,  171,  171,  171,  171,  171,  171,  171,  192,
+ /*    10 */   171,  171,  171,  171,  171,  171,  171,  171,  171,  171,
+ /*    20 */   171,  171,  171,  197,  171,  171,  171,  171,  171,  171,
+ /*    30 */   171,  171,  171,  171,  171,  171,  171,  171,  178,  171,
+ /*    40 */   171,  171,  171,  171,  171,  171,  171,  171,  171,  171,
+ /*    50 */   171,  171,  171,  171,  171,  171,  171,  171,  171,  171,
+ /*    60 */   171,  171,  171,  171,  171,  171,  171,  171,  171,  171,
+ /*    70 */   171,  171,  171,  171,  171,  171,  171,  171,  171,
 };
 /********** End of lemon-generated parsing tables *****************************/
 
@@ -400,44 +401,45 @@ static const char *const yyTokenName[] = {
   /*   22 */ "V_STRING",
   /*   23 */ "K_SESSION",
   /*   24 */ "K_JUMPING",
-  /*   25 */ "K_INSERT",
-  /*   26 */ "K_INTO",
-  /*   27 */ "K_VALUES",
-  /*   28 */ "K_COMA",
-  /*   29 */ "K_POINT",
-  /*   30 */ "K_AND",
-  /*   31 */ "K_OR",
-  /*   32 */ "K_EQUAL",
-  /*   33 */ "K_GREATER_THAN",
-  /*   34 */ "K_GRATER_THAN_EQUAL",
-  /*   35 */ "K_LESSER_THAN",
-  /*   36 */ "K_LESSER_THAN_EQUAL",
-  /*   37 */ "K_NOT_EQUAL",
-  /*   38 */ "K_MAX",
-  /*   39 */ "K_MIN",
-  /*   40 */ "K_DOUBLE",
-  /*   41 */ "K_INTEGER",
-  /*   42 */ "K_STRING",
-  /*   43 */ "K_BLOB",
-  /*   44 */ "K_GEOMETRY",
-  /*   45 */ "dataType",
-  /*   46 */ "identifierList",
-  /*   47 */ "attribute",
-  /*   48 */ "attributeList",
-  /*   49 */ "operator",
-  /*   50 */ "condition",
-  /*   51 */ "conditionList",
-  /*   52 */ "window",
-  /*   53 */ "aggregation",
-  /*   54 */ "viewCreationClause",
-  /*   55 */ "selectionClause",
-  /*   56 */ "start",
-  /*   57 */ "statement",
-  /*   58 */ "creation",
-  /*   59 */ "insertion",
-  /*   60 */ "fromClause",
-  /*   61 */ "valueList",
-  /*   62 */ "value",
+  /*   25 */ "K_AREA",
+  /*   26 */ "K_INSERT",
+  /*   27 */ "K_INTO",
+  /*   28 */ "K_VALUES",
+  /*   29 */ "K_COMA",
+  /*   30 */ "K_POINT",
+  /*   31 */ "K_AND",
+  /*   32 */ "K_OR",
+  /*   33 */ "K_EQUAL",
+  /*   34 */ "K_GREATER_THAN",
+  /*   35 */ "K_GRATER_THAN_EQUAL",
+  /*   36 */ "K_LESSER_THAN",
+  /*   37 */ "K_LESSER_THAN_EQUAL",
+  /*   38 */ "K_NOT_EQUAL",
+  /*   39 */ "K_MAX",
+  /*   40 */ "K_MIN",
+  /*   41 */ "K_DOUBLE",
+  /*   42 */ "K_INTEGER",
+  /*   43 */ "K_STRING",
+  /*   44 */ "K_BLOB",
+  /*   45 */ "K_GEOMETRY",
+  /*   46 */ "dataType",
+  /*   47 */ "identifierList",
+  /*   48 */ "attribute",
+  /*   49 */ "attributeList",
+  /*   50 */ "operator",
+  /*   51 */ "condition",
+  /*   52 */ "conditionList",
+  /*   53 */ "window",
+  /*   54 */ "aggregation",
+  /*   55 */ "viewCreationClause",
+  /*   56 */ "selectionClause",
+  /*   57 */ "start",
+  /*   58 */ "statement",
+  /*   59 */ "creation",
+  /*   60 */ "insertion",
+  /*   61 */ "fromClause",
+  /*   62 */ "valueList",
+  /*   63 */ "value",
 };
 #endif /* defined(YYCOVERAGE) || !defined(NDEBUG) */
 
@@ -459,39 +461,40 @@ static const char *const yyRuleName[] = {
  /*  11 */ "window ::= K_OPEN_SQUARE_BRACKET K_WAY V_STRING K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET",
  /*  12 */ "window ::= K_OPEN_SQUARE_BRACKET K_SESSION V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET",
  /*  13 */ "window ::= K_OPEN_SQUARE_BRACKET K_JUMPING V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET",
- /*  14 */ "insertion ::= K_INSERT K_INTO IDENTIFIER K_OPEN_BRACKET attributeList K_CLOSE_BRACKET K_VALUES K_OPEN_BRACKET valueList K_CLOSE_BRACKET",
- /*  15 */ "attributeList ::= attributeList K_COMA attribute",
- /*  16 */ "attributeList ::= attribute",
- /*  17 */ "attribute ::= IDENTIFIER",
- /*  18 */ "attribute ::= IDENTIFIER dataType",
- /*  19 */ "attribute ::= IDENTIFIER K_POINT IDENTIFIER",
- /*  20 */ "identifierList ::= IDENTIFIER",
- /*  21 */ "identifierList ::= identifierList K_COMA IDENTIFIER",
- /*  22 */ "conditionList ::= condition",
- /*  23 */ "condition ::= attribute operator attribute",
- /*  24 */ "operator ::= K_EQUAL",
- /*  25 */ "operator ::= K_GREATER_THAN",
- /*  26 */ "operator ::= K_GRATER_THAN_EQUAL",
- /*  27 */ "operator ::= K_LESSER_THAN",
- /*  28 */ "operator ::= K_LESSER_THAN_EQUAL",
- /*  29 */ "operator ::= K_NOT_EQUAL",
- /*  30 */ "aggregation ::= K_MAX K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET",
- /*  31 */ "aggregation ::= K_MIN K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET",
- /*  32 */ "dataType ::= K_DOUBLE",
- /*  33 */ "dataType ::= K_INTEGER",
- /*  34 */ "dataType ::= K_STRING",
- /*  35 */ "dataType ::= K_BLOB",
- /*  36 */ "dataType ::= K_GEOMETRY",
- /*  37 */ "start ::= statement K_SEMICOLON",
- /*  38 */ "statement ::= creation",
- /*  39 */ "statement ::= insertion",
- /*  40 */ "valueList ::= valueList K_COMA value",
- /*  41 */ "valueList ::= value",
- /*  42 */ "value ::= V_DOUBLE",
- /*  43 */ "value ::= V_LONG",
- /*  44 */ "value ::= V_STRING",
- /*  45 */ "conditionList ::= condition K_AND condition",
- /*  46 */ "conditionList ::= condition K_OR condition",
+ /*  14 */ "window ::= K_OPEN_SQUARE_BRACKET K_AREA V_STRING V_STRING K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET",
+ /*  15 */ "insertion ::= K_INSERT K_INTO IDENTIFIER K_OPEN_BRACKET attributeList K_CLOSE_BRACKET K_VALUES K_OPEN_BRACKET valueList K_CLOSE_BRACKET",
+ /*  16 */ "attributeList ::= attributeList K_COMA attribute",
+ /*  17 */ "attributeList ::= attribute",
+ /*  18 */ "attribute ::= IDENTIFIER",
+ /*  19 */ "attribute ::= IDENTIFIER dataType",
+ /*  20 */ "attribute ::= IDENTIFIER K_POINT IDENTIFIER",
+ /*  21 */ "identifierList ::= IDENTIFIER",
+ /*  22 */ "identifierList ::= identifierList K_COMA IDENTIFIER",
+ /*  23 */ "conditionList ::= condition",
+ /*  24 */ "condition ::= attribute operator attribute",
+ /*  25 */ "operator ::= K_EQUAL",
+ /*  26 */ "operator ::= K_GREATER_THAN",
+ /*  27 */ "operator ::= K_GRATER_THAN_EQUAL",
+ /*  28 */ "operator ::= K_LESSER_THAN",
+ /*  29 */ "operator ::= K_LESSER_THAN_EQUAL",
+ /*  30 */ "operator ::= K_NOT_EQUAL",
+ /*  31 */ "aggregation ::= K_MAX K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET",
+ /*  32 */ "aggregation ::= K_MIN K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET",
+ /*  33 */ "dataType ::= K_DOUBLE",
+ /*  34 */ "dataType ::= K_INTEGER",
+ /*  35 */ "dataType ::= K_STRING",
+ /*  36 */ "dataType ::= K_BLOB",
+ /*  37 */ "dataType ::= K_GEOMETRY",
+ /*  38 */ "start ::= statement K_SEMICOLON",
+ /*  39 */ "statement ::= creation",
+ /*  40 */ "statement ::= insertion",
+ /*  41 */ "valueList ::= valueList K_COMA value",
+ /*  42 */ "valueList ::= value",
+ /*  43 */ "value ::= V_DOUBLE",
+ /*  44 */ "value ::= V_LONG",
+ /*  45 */ "value ::= V_STRING",
+ /*  46 */ "conditionList ::= condition K_AND condition",
+ /*  47 */ "conditionList ::= condition K_OR condition",
 };
 #endif /* NDEBUG */
 
@@ -903,53 +906,54 @@ static void yy_shift(
 /* For rule J, yyRuleInfoLhs[J] contains the symbol on the left-hand side
 ** of that rule */
 static const YYCODETYPE yyRuleInfoLhs[] = {
-    58,  /* (0) creation ::= K_CREATE K_STREAM IDENTIFIER K_OPEN_BRACKET attributeList K_CLOSE_BRACKET */
-    58,  /* (1) creation ::= viewCreationClause selectionClause fromClause window */
-    58,  /* (2) creation ::= viewCreationClause selectionClause fromClause K_JOIN identifierList K_ON conditionList window */
-    54,  /* (3) viewCreationClause ::= K_CREATE K_VIEW IDENTIFIER K_AS */
-    55,  /* (4) selectionClause ::= K_SELECT attributeList */
-    55,  /* (5) selectionClause ::= K_SELECT aggregation */
-    60,  /* (6) fromClause ::= K_FROM IDENTIFIER */
-    52,  /* (7) window ::= K_OPEN_SQUARE_BRACKET K_SLIDE V_LONG K_MS K_CLOSE_SQUARE_BRACKET */
-    52,  /* (8) window ::= K_OPEN_SQUARE_BRACKET K_TILT V_LONG K_MS K_CLOSE_SQUARE_BRACKET */
-    52,  /* (9) window ::= K_OPEN_SQUARE_BRACKET K_SLIDE V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
-    52,  /* (10) window ::= K_OPEN_SQUARE_BRACKET K_TILT V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
-    52,  /* (11) window ::= K_OPEN_SQUARE_BRACKET K_WAY V_STRING K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
-    52,  /* (12) window ::= K_OPEN_SQUARE_BRACKET K_SESSION V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
-    52,  /* (13) window ::= K_OPEN_SQUARE_BRACKET K_JUMPING V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
-    59,  /* (14) insertion ::= K_INSERT K_INTO IDENTIFIER K_OPEN_BRACKET attributeList K_CLOSE_BRACKET K_VALUES K_OPEN_BRACKET valueList K_CLOSE_BRACKET */
-    48,  /* (15) attributeList ::= attributeList K_COMA attribute */
-    48,  /* (16) attributeList ::= attribute */
-    47,  /* (17) attribute ::= IDENTIFIER */
-    47,  /* (18) attribute ::= IDENTIFIER dataType */
-    47,  /* (19) attribute ::= IDENTIFIER K_POINT IDENTIFIER */
-    46,  /* (20) identifierList ::= IDENTIFIER */
-    46,  /* (21) identifierList ::= identifierList K_COMA IDENTIFIER */
-    51,  /* (22) conditionList ::= condition */
-    50,  /* (23) condition ::= attribute operator attribute */
-    49,  /* (24) operator ::= K_EQUAL */
-    49,  /* (25) operator ::= K_GREATER_THAN */
-    49,  /* (26) operator ::= K_GRATER_THAN_EQUAL */
-    49,  /* (27) operator ::= K_LESSER_THAN */
-    49,  /* (28) operator ::= K_LESSER_THAN_EQUAL */
-    49,  /* (29) operator ::= K_NOT_EQUAL */
-    53,  /* (30) aggregation ::= K_MAX K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
-    53,  /* (31) aggregation ::= K_MIN K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
-    45,  /* (32) dataType ::= K_DOUBLE */
-    45,  /* (33) dataType ::= K_INTEGER */
-    45,  /* (34) dataType ::= K_STRING */
-    45,  /* (35) dataType ::= K_BLOB */
-    45,  /* (36) dataType ::= K_GEOMETRY */
-    56,  /* (37) start ::= statement K_SEMICOLON */
-    57,  /* (38) statement ::= creation */
-    57,  /* (39) statement ::= insertion */
-    61,  /* (40) valueList ::= valueList K_COMA value */
-    61,  /* (41) valueList ::= value */
-    62,  /* (42) value ::= V_DOUBLE */
-    62,  /* (43) value ::= V_LONG */
-    62,  /* (44) value ::= V_STRING */
-    51,  /* (45) conditionList ::= condition K_AND condition */
-    51,  /* (46) conditionList ::= condition K_OR condition */
+    59,  /* (0) creation ::= K_CREATE K_STREAM IDENTIFIER K_OPEN_BRACKET attributeList K_CLOSE_BRACKET */
+    59,  /* (1) creation ::= viewCreationClause selectionClause fromClause window */
+    59,  /* (2) creation ::= viewCreationClause selectionClause fromClause K_JOIN identifierList K_ON conditionList window */
+    55,  /* (3) viewCreationClause ::= K_CREATE K_VIEW IDENTIFIER K_AS */
+    56,  /* (4) selectionClause ::= K_SELECT attributeList */
+    56,  /* (5) selectionClause ::= K_SELECT aggregation */
+    61,  /* (6) fromClause ::= K_FROM IDENTIFIER */
+    53,  /* (7) window ::= K_OPEN_SQUARE_BRACKET K_SLIDE V_LONG K_MS K_CLOSE_SQUARE_BRACKET */
+    53,  /* (8) window ::= K_OPEN_SQUARE_BRACKET K_TILT V_LONG K_MS K_CLOSE_SQUARE_BRACKET */
+    53,  /* (9) window ::= K_OPEN_SQUARE_BRACKET K_SLIDE V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
+    53,  /* (10) window ::= K_OPEN_SQUARE_BRACKET K_TILT V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
+    53,  /* (11) window ::= K_OPEN_SQUARE_BRACKET K_WAY V_STRING K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
+    53,  /* (12) window ::= K_OPEN_SQUARE_BRACKET K_SESSION V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
+    53,  /* (13) window ::= K_OPEN_SQUARE_BRACKET K_JUMPING V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
+    53,  /* (14) window ::= K_OPEN_SQUARE_BRACKET K_AREA V_STRING V_STRING K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
+    60,  /* (15) insertion ::= K_INSERT K_INTO IDENTIFIER K_OPEN_BRACKET attributeList K_CLOSE_BRACKET K_VALUES K_OPEN_BRACKET valueList K_CLOSE_BRACKET */
+    49,  /* (16) attributeList ::= attributeList K_COMA attribute */
+    49,  /* (17) attributeList ::= attribute */
+    48,  /* (18) attribute ::= IDENTIFIER */
+    48,  /* (19) attribute ::= IDENTIFIER dataType */
+    48,  /* (20) attribute ::= IDENTIFIER K_POINT IDENTIFIER */
+    47,  /* (21) identifierList ::= IDENTIFIER */
+    47,  /* (22) identifierList ::= identifierList K_COMA IDENTIFIER */
+    52,  /* (23) conditionList ::= condition */
+    51,  /* (24) condition ::= attribute operator attribute */
+    50,  /* (25) operator ::= K_EQUAL */
+    50,  /* (26) operator ::= K_GREATER_THAN */
+    50,  /* (27) operator ::= K_GRATER_THAN_EQUAL */
+    50,  /* (28) operator ::= K_LESSER_THAN */
+    50,  /* (29) operator ::= K_LESSER_THAN_EQUAL */
+    50,  /* (30) operator ::= K_NOT_EQUAL */
+    54,  /* (31) aggregation ::= K_MAX K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
+    54,  /* (32) aggregation ::= K_MIN K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
+    46,  /* (33) dataType ::= K_DOUBLE */
+    46,  /* (34) dataType ::= K_INTEGER */
+    46,  /* (35) dataType ::= K_STRING */
+    46,  /* (36) dataType ::= K_BLOB */
+    46,  /* (37) dataType ::= K_GEOMETRY */
+    57,  /* (38) start ::= statement K_SEMICOLON */
+    58,  /* (39) statement ::= creation */
+    58,  /* (40) statement ::= insertion */
+    62,  /* (41) valueList ::= valueList K_COMA value */
+    62,  /* (42) valueList ::= value */
+    63,  /* (43) value ::= V_DOUBLE */
+    63,  /* (44) value ::= V_LONG */
+    63,  /* (45) value ::= V_STRING */
+    52,  /* (46) conditionList ::= condition K_AND condition */
+    52,  /* (47) conditionList ::= condition K_OR condition */
 };
 
 /* For rule J, yyRuleInfoNRhs[J] contains the negative of the number
@@ -969,39 +973,40 @@ static const signed char yyRuleInfoNRhs[] = {
    -6,  /* (11) window ::= K_OPEN_SQUARE_BRACKET K_WAY V_STRING K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
    -7,  /* (12) window ::= K_OPEN_SQUARE_BRACKET K_SESSION V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
    -7,  /* (13) window ::= K_OPEN_SQUARE_BRACKET K_JUMPING V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
-  -10,  /* (14) insertion ::= K_INSERT K_INTO IDENTIFIER K_OPEN_BRACKET attributeList K_CLOSE_BRACKET K_VALUES K_OPEN_BRACKET valueList K_CLOSE_BRACKET */
-   -3,  /* (15) attributeList ::= attributeList K_COMA attribute */
-   -1,  /* (16) attributeList ::= attribute */
-   -1,  /* (17) attribute ::= IDENTIFIER */
-   -2,  /* (18) attribute ::= IDENTIFIER dataType */
-   -3,  /* (19) attribute ::= IDENTIFIER K_POINT IDENTIFIER */
-   -1,  /* (20) identifierList ::= IDENTIFIER */
-   -3,  /* (21) identifierList ::= identifierList K_COMA IDENTIFIER */
-   -1,  /* (22) conditionList ::= condition */
-   -3,  /* (23) condition ::= attribute operator attribute */
-   -1,  /* (24) operator ::= K_EQUAL */
-   -1,  /* (25) operator ::= K_GREATER_THAN */
-   -1,  /* (26) operator ::= K_GRATER_THAN_EQUAL */
-   -1,  /* (27) operator ::= K_LESSER_THAN */
-   -1,  /* (28) operator ::= K_LESSER_THAN_EQUAL */
-   -1,  /* (29) operator ::= K_NOT_EQUAL */
-   -4,  /* (30) aggregation ::= K_MAX K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
-   -4,  /* (31) aggregation ::= K_MIN K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
-   -1,  /* (32) dataType ::= K_DOUBLE */
-   -1,  /* (33) dataType ::= K_INTEGER */
-   -1,  /* (34) dataType ::= K_STRING */
-   -1,  /* (35) dataType ::= K_BLOB */
-   -1,  /* (36) dataType ::= K_GEOMETRY */
-   -2,  /* (37) start ::= statement K_SEMICOLON */
-   -1,  /* (38) statement ::= creation */
-   -1,  /* (39) statement ::= insertion */
-   -3,  /* (40) valueList ::= valueList K_COMA value */
-   -1,  /* (41) valueList ::= value */
-   -1,  /* (42) value ::= V_DOUBLE */
-   -1,  /* (43) value ::= V_LONG */
-   -1,  /* (44) value ::= V_STRING */
-   -3,  /* (45) conditionList ::= condition K_AND condition */
-   -3,  /* (46) conditionList ::= condition K_OR condition */
+   -7,  /* (14) window ::= K_OPEN_SQUARE_BRACKET K_AREA V_STRING V_STRING K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
+  -10,  /* (15) insertion ::= K_INSERT K_INTO IDENTIFIER K_OPEN_BRACKET attributeList K_CLOSE_BRACKET K_VALUES K_OPEN_BRACKET valueList K_CLOSE_BRACKET */
+   -3,  /* (16) attributeList ::= attributeList K_COMA attribute */
+   -1,  /* (17) attributeList ::= attribute */
+   -1,  /* (18) attribute ::= IDENTIFIER */
+   -2,  /* (19) attribute ::= IDENTIFIER dataType */
+   -3,  /* (20) attribute ::= IDENTIFIER K_POINT IDENTIFIER */
+   -1,  /* (21) identifierList ::= IDENTIFIER */
+   -3,  /* (22) identifierList ::= identifierList K_COMA IDENTIFIER */
+   -1,  /* (23) conditionList ::= condition */
+   -3,  /* (24) condition ::= attribute operator attribute */
+   -1,  /* (25) operator ::= K_EQUAL */
+   -1,  /* (26) operator ::= K_GREATER_THAN */
+   -1,  /* (27) operator ::= K_GRATER_THAN_EQUAL */
+   -1,  /* (28) operator ::= K_LESSER_THAN */
+   -1,  /* (29) operator ::= K_LESSER_THAN_EQUAL */
+   -1,  /* (30) operator ::= K_NOT_EQUAL */
+   -4,  /* (31) aggregation ::= K_MAX K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
+   -4,  /* (32) aggregation ::= K_MIN K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
+   -1,  /* (33) dataType ::= K_DOUBLE */
+   -1,  /* (34) dataType ::= K_INTEGER */
+   -1,  /* (35) dataType ::= K_STRING */
+   -1,  /* (36) dataType ::= K_BLOB */
+   -1,  /* (37) dataType ::= K_GEOMETRY */
+   -2,  /* (38) start ::= statement K_SEMICOLON */
+   -1,  /* (39) statement ::= creation */
+   -1,  /* (40) statement ::= insertion */
+   -3,  /* (41) valueList ::= valueList K_COMA value */
+   -1,  /* (42) valueList ::= value */
+   -1,  /* (43) value ::= V_DOUBLE */
+   -1,  /* (44) value ::= V_LONG */
+   -1,  /* (45) value ::= V_STRING */
+   -3,  /* (46) conditionList ::= condition K_AND condition */
+   -3,  /* (47) conditionList ::= condition K_OR condition */
 };
 
 static void yy_accept(yyParser*);  /* Forward Declaration */
@@ -1097,36 +1102,36 @@ static YYACTIONTYPE yy_reduce(
     manager->add(new STREAM::Stream(*(yymsp[-3].minor.yy0->stringValue), *yymsp[-1].minor.yy8));
     delete yymsp[-1].minor.yy8;
 }
-#line 1101 "../include/parser/parser.c"
+#line 1106 "../include/parser/parser.c"
         break;
       case 1: /* creation ::= viewCreationClause selectionClause fromClause window */
 #line 76 "../include/parser/parser.y"
 {
-    std::shared_ptr<STREAM::AOperator> selection(yymsp[-2].minor.yy44);
+    std::shared_ptr<STREAM::AOperator> selection(yymsp[-2].minor.yy4);
     std::shared_ptr<STREAM::AOperator> stream = manager->getStream(*(yymsp[-1].minor.yy0->stringValue));
-    std::shared_ptr<STREAM::AOperator> window(yymsp[0].minor.yy112);
+    std::shared_ptr<STREAM::AOperator> window(yymsp[0].minor.yy56);
 
     window->setSrc(stream);
     selection->setSrc(window);
-    yymsp[-3].minor.yy62->setSrc(selection);
+    yymsp[-3].minor.yy46->setSrc(selection);
 
-    manager->add(yymsp[-3].minor.yy62);
+    manager->add(yymsp[-3].minor.yy46);
 }
-#line 1116 "../include/parser/parser.c"
+#line 1121 "../include/parser/parser.c"
         break;
       case 2: /* creation ::= viewCreationClause selectionClause fromClause K_JOIN identifierList K_ON conditionList window */
 #line 89 "../include/parser/parser.y"
 {
-    auto join = std::make_shared<STREAM::Join>(*yymsp[-1].minor.yy74);
-    std::shared_ptr<STREAM::AOperator> windowLeft(yymsp[0].minor.yy112);
+    auto join = std::make_shared<STREAM::Join>(*yymsp[-1].minor.yy108);
+    std::shared_ptr<STREAM::AOperator> windowLeft(yymsp[0].minor.yy56);
 
-    //std::shared_ptr<STREAM::AOperator> windowRight = std::make_shared<STREAM::AWindow>(*yymsp[0].minor.yy112);
+    //std::shared_ptr<STREAM::AOperator> windowRight = std::make_shared<STREAM::AWindow>(*yymsp[0].minor.yy56);
 
-    std::shared_ptr<STREAM::AOperator> windowRight(yymsp[0].minor.yy112);
-    std::shared_ptr<STREAM::AOperator> selection(yymsp[-6].minor.yy44);
+    std::shared_ptr<STREAM::AOperator> windowRight(yymsp[0].minor.yy56);
+    std::shared_ptr<STREAM::AOperator> selection(yymsp[-6].minor.yy4);
 
     std::shared_ptr<STREAM::AOperator> streamLeft = manager->getStream(*(yymsp[-5].minor.yy0->stringValue));
-    std::shared_ptr<STREAM::AOperator> streamRight = manager->getStream(*(yymsp[-3].minor.yy94->front()));
+    std::shared_ptr<STREAM::AOperator> streamRight = manager->getStream(*(yymsp[-3].minor.yy52->front()));
 
     windowLeft->setSrc(streamLeft);
     windowRight->setSrc(streamRight);
@@ -1135,285 +1140,299 @@ static YYACTIONTYPE yy_reduce(
     join->setSecondarySrc(windowRight);
 
     selection->setSrc(join);
-    yymsp[-7].minor.yy62->setSrc(selection);
+    yymsp[-7].minor.yy46->setSrc(selection);
 
-    manager->add(yymsp[-7].minor.yy62);
+    manager->add(yymsp[-7].minor.yy46);
 }
-#line 1143 "../include/parser/parser.c"
+#line 1148 "../include/parser/parser.c"
         break;
       case 3: /* viewCreationClause ::= K_CREATE K_VIEW IDENTIFIER K_AS */
 #line 114 "../include/parser/parser.y"
 {
-    yymsp[-3].minor.yy62 = new STREAM::View(*(yymsp[-1].minor.yy0->stringValue));
+    yymsp[-3].minor.yy46 = new STREAM::View(*(yymsp[-1].minor.yy0->stringValue));
 }
-#line 1150 "../include/parser/parser.c"
+#line 1155 "../include/parser/parser.c"
         break;
       case 4: /* selectionClause ::= K_SELECT attributeList */
 #line 119 "../include/parser/parser.y"
 {
-    yymsp[-1].minor.yy44 = new STREAM::Select(*yymsp[0].minor.yy8);
+    yymsp[-1].minor.yy4 = new STREAM::Select(*yymsp[0].minor.yy8);
     delete yymsp[0].minor.yy8;
 }
-#line 1158 "../include/parser/parser.c"
+#line 1163 "../include/parser/parser.c"
         break;
       case 5: /* selectionClause ::= K_SELECT aggregation */
 #line 125 "../include/parser/parser.y"
 {
-    yymsp[-1].minor.yy44 = yymsp[0].minor.yy80;
+    yymsp[-1].minor.yy4 = yymsp[0].minor.yy16;
 }
-#line 1165 "../include/parser/parser.c"
+#line 1170 "../include/parser/parser.c"
         break;
       case 6: /* fromClause ::= K_FROM IDENTIFIER */
 #line 130 "../include/parser/parser.y"
 {
     yymsp[-1].minor.yy0 = yymsp[0].minor.yy0;
 }
-#line 1172 "../include/parser/parser.c"
+#line 1177 "../include/parser/parser.c"
         break;
       case 7: /* window ::= K_OPEN_SQUARE_BRACKET K_SLIDE V_LONG K_MS K_CLOSE_SQUARE_BRACKET */
 #line 139 "../include/parser/parser.y"
 {
     std::chrono::milliseconds ms(*(yymsp[-2].minor.yy0->longValue));
-    yymsp[-4].minor.yy112 = new STREAM::SlidingWindow(ms);
+    yymsp[-4].minor.yy56 = new STREAM::SlidingWindow(ms);
 }
-#line 1180 "../include/parser/parser.c"
+#line 1185 "../include/parser/parser.c"
         break;
       case 8: /* window ::= K_OPEN_SQUARE_BRACKET K_TILT V_LONG K_MS K_CLOSE_SQUARE_BRACKET */
 #line 144 "../include/parser/parser.y"
 {
     std::chrono::milliseconds ms(*(yymsp[-2].minor.yy0->longValue));
-    yymsp[-4].minor.yy112 = new STREAM::TiltingWindow(ms);
+    yymsp[-4].minor.yy56 = new STREAM::TiltingWindow(ms);
 }
-#line 1188 "../include/parser/parser.c"
+#line 1193 "../include/parser/parser.c"
         break;
       case 9: /* window ::= K_OPEN_SQUARE_BRACKET K_SLIDE V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
 #line 149 "../include/parser/parser.y"
 {
-    yymsp[-6].minor.yy112 = new STREAM::SlidingDistanceWindow(*(yymsp[-4].minor.yy0->doubleValue), *(yymsp[-1].minor.yy0->stringValue));
+    yymsp[-6].minor.yy56 = new STREAM::SlidingDistanceWindow(*(yymsp[-4].minor.yy0->doubleValue), *(yymsp[-1].minor.yy0->stringValue));
 }
-#line 1195 "../include/parser/parser.c"
+#line 1200 "../include/parser/parser.c"
         break;
       case 10: /* window ::= K_OPEN_SQUARE_BRACKET K_TILT V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
 #line 153 "../include/parser/parser.y"
 {
-    yymsp[-6].minor.yy112 = new STREAM::TiltingDistanceWindow(*(yymsp[-4].minor.yy0->doubleValue), *(yymsp[-1].minor.yy0->stringValue));
+    yymsp[-6].minor.yy56 = new STREAM::TiltingDistanceWindow(*(yymsp[-4].minor.yy0->doubleValue), *(yymsp[-1].minor.yy0->stringValue));
 }
-#line 1202 "../include/parser/parser.c"
+#line 1207 "../include/parser/parser.c"
         break;
       case 11: /* window ::= K_OPEN_SQUARE_BRACKET K_WAY V_STRING K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
 #line 157 "../include/parser/parser.y"
 {
     std::string wkt = *(yymsp[-3].minor.yy0->stringValue);
     wkt = wkt.substr(1, wkt.size() - 2);
-    yymsp[-5].minor.yy112 = new STREAM::WaypointWindow(wkt, *(yymsp[-1].minor.yy0->stringValue));
+    yymsp[-5].minor.yy56 = new STREAM::WaypointWindow(wkt, *(yymsp[-1].minor.yy0->stringValue));
 }
-#line 1211 "../include/parser/parser.c"
+#line 1216 "../include/parser/parser.c"
         break;
       case 12: /* window ::= K_OPEN_SQUARE_BRACKET K_SESSION V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
 #line 163 "../include/parser/parser.y"
 {
-    yymsp[-6].minor.yy112 = new STREAM::SessionDistanceWindow(*(yymsp[-4].minor.yy0->doubleValue), *(yymsp[-1].minor.yy0->stringValue));
+    yymsp[-6].minor.yy56 = new STREAM::SessionDistanceWindow(*(yymsp[-4].minor.yy0->doubleValue), *(yymsp[-1].minor.yy0->stringValue));
 }
-#line 1218 "../include/parser/parser.c"
+#line 1223 "../include/parser/parser.c"
         break;
       case 13: /* window ::= K_OPEN_SQUARE_BRACKET K_JUMPING V_DOUBLE K_M K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
 #line 167 "../include/parser/parser.y"
 {
-    yymsp[-6].minor.yy112 = new STREAM::JumpingDistanceWindow(*(yymsp[-4].minor.yy0->doubleValue), *(yymsp[-1].minor.yy0->stringValue));
+    yymsp[-6].minor.yy56 = new STREAM::JumpingDistanceWindow(*(yymsp[-4].minor.yy0->doubleValue), *(yymsp[-1].minor.yy0->stringValue));
 }
-#line 1225 "../include/parser/parser.c"
+#line 1230 "../include/parser/parser.c"
         break;
-      case 14: /* insertion ::= K_INSERT K_INTO IDENTIFIER K_OPEN_BRACKET attributeList K_CLOSE_BRACKET K_VALUES K_OPEN_BRACKET valueList K_CLOSE_BRACKET */
-#line 177 "../include/parser/parser.y"
+      case 14: /* window ::= K_OPEN_SQUARE_BRACKET K_AREA V_STRING V_STRING K_ON IDENTIFIER K_CLOSE_SQUARE_BRACKET */
+#line 171 "../include/parser/parser.y"
+{
+
+    std::string wkt1 = *(yymsp[-4].minor.yy0->stringValue);
+    wkt1 = wkt1.substr(1, wkt1.size() - 2);
+
+    std::string wkt2 = *(yymsp[-3].minor.yy0->stringValue);
+    wkt2 = wkt2.substr(1, wkt2.size() - 2);
+
+    yymsp[-6].minor.yy56 = new STREAM::AreaWindow(wkt1,wkt2, *(yymsp[-1].minor.yy0->stringValue));
+}
+#line 1244 "../include/parser/parser.c"
+        break;
+      case 15: /* insertion ::= K_INSERT K_INTO IDENTIFIER K_OPEN_BRACKET attributeList K_CLOSE_BRACKET K_VALUES K_OPEN_BRACKET valueList K_CLOSE_BRACKET */
+#line 188 "../include/parser/parser.y"
 {
     delete yymsp[-5].minor.yy8;
 }
-#line 1232 "../include/parser/parser.c"
+#line 1251 "../include/parser/parser.c"
         break;
-      case 15: /* attributeList ::= attributeList K_COMA attribute */
-#line 188 "../include/parser/parser.y"
+      case 16: /* attributeList ::= attributeList K_COMA attribute */
+#line 199 "../include/parser/parser.y"
 {
-    yymsp[-2].minor.yy8->push_back(*yymsp[0].minor.yy119);
-    delete yymsp[0].minor.yy119;
+    yymsp[-2].minor.yy8->push_back(*yymsp[0].minor.yy47);
+    delete yymsp[0].minor.yy47;
     yylhsminor.yy8 = yymsp[-2].minor.yy8;
 }
-#line 1241 "../include/parser/parser.c"
+#line 1260 "../include/parser/parser.c"
   yymsp[-2].minor.yy8 = yylhsminor.yy8;
         break;
-      case 16: /* attributeList ::= attribute */
-#line 195 "../include/parser/parser.y"
-{
-    yylhsminor.yy8 = new std::list<STREAM::Attribute>({*yymsp[0].minor.yy119});
-    delete yymsp[0].minor.yy119;
-}
-#line 1250 "../include/parser/parser.c"
-  yymsp[0].minor.yy8 = yylhsminor.yy8;
-        break;
-      case 17: /* attribute ::= IDENTIFIER */
-#line 201 "../include/parser/parser.y"
-{
-    yylhsminor.yy119 = new STREAM::Attribute(*(yymsp[0].minor.yy0->stringValue));
-}
-#line 1258 "../include/parser/parser.c"
-  yymsp[0].minor.yy119 = yylhsminor.yy119;
-        break;
-      case 18: /* attribute ::= IDENTIFIER dataType */
+      case 17: /* attributeList ::= attribute */
 #line 206 "../include/parser/parser.y"
 {
-    yylhsminor.yy119 = new STREAM::Attribute(*(yymsp[-1].minor.yy0->stringValue), yymsp[0].minor.yy73);
+    yylhsminor.yy8 = new std::list<STREAM::Attribute>({*yymsp[0].minor.yy47});
+    delete yymsp[0].minor.yy47;
 }
-#line 1266 "../include/parser/parser.c"
-  yymsp[-1].minor.yy119 = yylhsminor.yy119;
+#line 1269 "../include/parser/parser.c"
+  yymsp[0].minor.yy8 = yylhsminor.yy8;
         break;
-      case 19: /* attribute ::= IDENTIFIER K_POINT IDENTIFIER */
-#line 211 "../include/parser/parser.y"
+      case 18: /* attribute ::= IDENTIFIER */
+#line 212 "../include/parser/parser.y"
 {
-    yylhsminor.yy119 = new STREAM::Attribute(*(yymsp[-2].minor.yy0->stringValue), *(yymsp[0].minor.yy0->stringValue));
+    yylhsminor.yy47 = new STREAM::Attribute(*(yymsp[0].minor.yy0->stringValue));
 }
-#line 1274 "../include/parser/parser.c"
-  yymsp[-2].minor.yy119 = yylhsminor.yy119;
+#line 1277 "../include/parser/parser.c"
+  yymsp[0].minor.yy47 = yylhsminor.yy47;
         break;
-      case 20: /* identifierList ::= IDENTIFIER */
-#line 221 "../include/parser/parser.y"
+      case 19: /* attribute ::= IDENTIFIER dataType */
+#line 217 "../include/parser/parser.y"
 {
-    yylhsminor.yy94 = new std::list<std::string*>({yymsp[0].minor.yy0->stringValue});
+    yylhsminor.yy47 = new STREAM::Attribute(*(yymsp[-1].minor.yy0->stringValue), yymsp[0].minor.yy55);
 }
-#line 1282 "../include/parser/parser.c"
-  yymsp[0].minor.yy94 = yylhsminor.yy94;
+#line 1285 "../include/parser/parser.c"
+  yymsp[-1].minor.yy47 = yylhsminor.yy47;
         break;
-      case 21: /* identifierList ::= identifierList K_COMA IDENTIFIER */
-#line 226 "../include/parser/parser.y"
+      case 20: /* attribute ::= IDENTIFIER K_POINT IDENTIFIER */
+#line 222 "../include/parser/parser.y"
 {
-    yymsp[-2].minor.yy94->push_back(yymsp[0].minor.yy0->stringValue);
-    yylhsminor.yy94 = yymsp[-2].minor.yy94;
+    yylhsminor.yy47 = new STREAM::Attribute(*(yymsp[-2].minor.yy0->stringValue), *(yymsp[0].minor.yy0->stringValue));
 }
-#line 1291 "../include/parser/parser.c"
-  yymsp[-2].minor.yy94 = yylhsminor.yy94;
+#line 1293 "../include/parser/parser.c"
+  yymsp[-2].minor.yy47 = yylhsminor.yy47;
         break;
-      case 22: /* conditionList ::= condition */
-#line 257 "../include/parser/parser.y"
+      case 21: /* identifierList ::= IDENTIFIER */
+#line 232 "../include/parser/parser.y"
 {
-    yylhsminor.yy74 = new std::list<STREAM::ACondition>({*yymsp[0].minor.yy81});
-    delete yymsp[0].minor.yy81;
+    yylhsminor.yy52 = new std::list<std::string*>({yymsp[0].minor.yy0->stringValue});
 }
-#line 1300 "../include/parser/parser.c"
-  yymsp[0].minor.yy74 = yylhsminor.yy74;
+#line 1301 "../include/parser/parser.c"
+  yymsp[0].minor.yy52 = yylhsminor.yy52;
         break;
-      case 23: /* condition ::= attribute operator attribute */
-#line 263 "../include/parser/parser.y"
+      case 22: /* identifierList ::= identifierList K_COMA IDENTIFIER */
+#line 237 "../include/parser/parser.y"
 {
-    yymsp[-1].minor.yy81->setFirst(*yymsp[-2].minor.yy119);
-    yymsp[-1].minor.yy81->setSecond(*yymsp[0].minor.yy119);
-    yylhsminor.yy81 = yymsp[-1].minor.yy81;
+    yymsp[-2].minor.yy52->push_back(yymsp[0].minor.yy0->stringValue);
+    yylhsminor.yy52 = yymsp[-2].minor.yy52;
+}
+#line 1310 "../include/parser/parser.c"
+  yymsp[-2].minor.yy52 = yylhsminor.yy52;
+        break;
+      case 23: /* conditionList ::= condition */
+#line 268 "../include/parser/parser.y"
+{
+    yylhsminor.yy108 = new std::list<STREAM::ACondition>({*yymsp[0].minor.yy23});
+    delete yymsp[0].minor.yy23;
+}
+#line 1319 "../include/parser/parser.c"
+  yymsp[0].minor.yy108 = yylhsminor.yy108;
+        break;
+      case 24: /* condition ::= attribute operator attribute */
+#line 274 "../include/parser/parser.y"
+{
+    yymsp[-1].minor.yy23->setFirst(*yymsp[-2].minor.yy47);
+    yymsp[-1].minor.yy23->setSecond(*yymsp[0].minor.yy47);
+    yylhsminor.yy23 = yymsp[-1].minor.yy23;
 
-    delete yymsp[-2].minor.yy119;
-    delete yymsp[0].minor.yy119;
+    delete yymsp[-2].minor.yy47;
+    delete yymsp[0].minor.yy47;
 }
-#line 1313 "../include/parser/parser.c"
-  yymsp[-2].minor.yy81 = yylhsminor.yy81;
+#line 1332 "../include/parser/parser.c"
+  yymsp[-2].minor.yy23 = yylhsminor.yy23;
         break;
-      case 24: /* operator ::= K_EQUAL */
-#line 273 "../include/parser/parser.y"
+      case 25: /* operator ::= K_EQUAL */
+#line 284 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy81 = new STREAM::EQ();
+    yymsp[0].minor.yy23 = new STREAM::EQ();
 }
-#line 1321 "../include/parser/parser.c"
+#line 1340 "../include/parser/parser.c"
         break;
-      case 25: /* operator ::= K_GREATER_THAN */
-#line 278 "../include/parser/parser.y"
+      case 26: /* operator ::= K_GREATER_THAN */
+#line 289 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy81 = new STREAM::GT();
+    yymsp[0].minor.yy23 = new STREAM::GT();
 }
-#line 1328 "../include/parser/parser.c"
+#line 1347 "../include/parser/parser.c"
         break;
-      case 26: /* operator ::= K_GRATER_THAN_EQUAL */
-#line 283 "../include/parser/parser.y"
+      case 27: /* operator ::= K_GRATER_THAN_EQUAL */
+#line 294 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy81 = new STREAM::GTE();
+    yymsp[0].minor.yy23 = new STREAM::GTE();
 }
-#line 1335 "../include/parser/parser.c"
+#line 1354 "../include/parser/parser.c"
         break;
-      case 27: /* operator ::= K_LESSER_THAN */
-#line 288 "../include/parser/parser.y"
+      case 28: /* operator ::= K_LESSER_THAN */
+#line 299 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy81 = new STREAM::LT();
+    yymsp[0].minor.yy23 = new STREAM::LT();
 }
-#line 1342 "../include/parser/parser.c"
+#line 1361 "../include/parser/parser.c"
         break;
-      case 28: /* operator ::= K_LESSER_THAN_EQUAL */
-#line 293 "../include/parser/parser.y"
+      case 29: /* operator ::= K_LESSER_THAN_EQUAL */
+#line 304 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy81 = new STREAM::LTE();
+    yymsp[0].minor.yy23 = new STREAM::LTE();
 }
-#line 1349 "../include/parser/parser.c"
+#line 1368 "../include/parser/parser.c"
         break;
-      case 29: /* operator ::= K_NOT_EQUAL */
-#line 298 "../include/parser/parser.y"
+      case 30: /* operator ::= K_NOT_EQUAL */
+#line 309 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy81 = new STREAM::NEQ();
+    yymsp[0].minor.yy23 = new STREAM::NEQ();
 }
-#line 1356 "../include/parser/parser.c"
+#line 1375 "../include/parser/parser.c"
         break;
-      case 30: /* aggregation ::= K_MAX K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
-#line 321 "../include/parser/parser.y"
+      case 31: /* aggregation ::= K_MAX K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
+#line 332 "../include/parser/parser.y"
 {
-    yymsp[-3].minor.yy80 = new STREAM::Max(*yymsp[-1].minor.yy119);
+    yymsp[-3].minor.yy16 = new STREAM::Max(*yymsp[-1].minor.yy47);
 }
-#line 1363 "../include/parser/parser.c"
+#line 1382 "../include/parser/parser.c"
         break;
-      case 31: /* aggregation ::= K_MIN K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
-#line 326 "../include/parser/parser.y"
-{
-
-}
-#line 1370 "../include/parser/parser.c"
-        break;
-      case 32: /* dataType ::= K_DOUBLE */
+      case 32: /* aggregation ::= K_MIN K_OPEN_SQUARE_BRACKET attribute K_CLOSE_SQUARE_BRACKET */
 #line 337 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy73 = STREAM::ETypes::DOUBLE;
+
 }
-#line 1377 "../include/parser/parser.c"
+#line 1389 "../include/parser/parser.c"
         break;
-      case 33: /* dataType ::= K_INTEGER */
-#line 342 "../include/parser/parser.y"
+      case 33: /* dataType ::= K_DOUBLE */
+#line 348 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy73 = STREAM::ETypes::LONG;
+    yymsp[0].minor.yy55 = STREAM::ETypes::DOUBLE;
 }
-#line 1384 "../include/parser/parser.c"
+#line 1396 "../include/parser/parser.c"
         break;
-      case 34: /* dataType ::= K_STRING */
-#line 347 "../include/parser/parser.y"
+      case 34: /* dataType ::= K_INTEGER */
+#line 353 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy73 = STREAM::ETypes::STRING;
+    yymsp[0].minor.yy55 = STREAM::ETypes::LONG;
 }
-#line 1391 "../include/parser/parser.c"
+#line 1403 "../include/parser/parser.c"
         break;
-      case 35: /* dataType ::= K_BLOB */
-#line 352 "../include/parser/parser.y"
+      case 35: /* dataType ::= K_STRING */
+#line 358 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy73 = STREAM::ETypes::BLOB;
+    yymsp[0].minor.yy55 = STREAM::ETypes::STRING;
 }
-#line 1398 "../include/parser/parser.c"
+#line 1410 "../include/parser/parser.c"
         break;
-      case 36: /* dataType ::= K_GEOMETRY */
-#line 357 "../include/parser/parser.y"
+      case 36: /* dataType ::= K_BLOB */
+#line 363 "../include/parser/parser.y"
 {
-    yymsp[0].minor.yy73 = STREAM::ETypes::GEOMETRY;
+    yymsp[0].minor.yy55 = STREAM::ETypes::BLOB;
 }
-#line 1405 "../include/parser/parser.c"
+#line 1417 "../include/parser/parser.c"
+        break;
+      case 37: /* dataType ::= K_GEOMETRY */
+#line 368 "../include/parser/parser.y"
+{
+    yymsp[0].minor.yy55 = STREAM::ETypes::GEOMETRY;
+}
+#line 1424 "../include/parser/parser.c"
         break;
       default:
-      /* (37) start ::= statement K_SEMICOLON */ yytestcase(yyruleno==37);
-      /* (38) statement ::= creation (OPTIMIZED OUT) */ assert(yyruleno!=38);
-      /* (39) statement ::= insertion (OPTIMIZED OUT) */ assert(yyruleno!=39);
-      /* (40) valueList ::= valueList K_COMA value */ yytestcase(yyruleno==40);
-      /* (41) valueList ::= value (OPTIMIZED OUT) */ assert(yyruleno!=41);
-      /* (42) value ::= V_DOUBLE */ yytestcase(yyruleno==42);
-      /* (43) value ::= V_LONG */ yytestcase(yyruleno==43);
-      /* (44) value ::= V_STRING */ yytestcase(yyruleno==44);
-      /* (45) conditionList ::= condition K_AND condition */ yytestcase(yyruleno==45);
-      /* (46) conditionList ::= condition K_OR condition */ yytestcase(yyruleno==46);
+      /* (38) start ::= statement K_SEMICOLON */ yytestcase(yyruleno==38);
+      /* (39) statement ::= creation (OPTIMIZED OUT) */ assert(yyruleno!=39);
+      /* (40) statement ::= insertion (OPTIMIZED OUT) */ assert(yyruleno!=40);
+      /* (41) valueList ::= valueList K_COMA value */ yytestcase(yyruleno==41);
+      /* (42) valueList ::= value (OPTIMIZED OUT) */ assert(yyruleno!=42);
+      /* (43) value ::= V_DOUBLE */ yytestcase(yyruleno==43);
+      /* (44) value ::= V_LONG */ yytestcase(yyruleno==44);
+      /* (45) value ::= V_STRING */ yytestcase(yyruleno==45);
+      /* (46) conditionList ::= condition K_AND condition */ yytestcase(yyruleno==46);
+      /* (47) conditionList ::= condition K_OR condition */ yytestcase(yyruleno==47);
         break;
 /********** End reduce actions ************************************************/
   };
@@ -1476,7 +1495,7 @@ static void yy_syntax_error(
 #line 12 "../include/parser/parser.y"
 
  std::cout << "Parser Error." << std::endl;
-#line 1480 "../include/parser/parser.c"
+#line 1499 "../include/parser/parser.c"
 /************ End %syntax_error code ******************************************/
   ParseARG_STORE /* Suppress warning about unused %extra_argument variable */
   ParseCTX_STORE
@@ -1505,7 +1524,7 @@ static void yy_accept(
 #line 16 "../include/parser/parser.y"
 
  std::cout << "Parser Sucess." << std::endl;
-#line 1509 "../include/parser/parser.c"
+#line 1528 "../include/parser/parser.c"
 /*********** End %parse_accept code *******************************************/
   ParseARG_STORE /* Suppress warning about unused %extra_argument variable */
   ParseCTX_STORE

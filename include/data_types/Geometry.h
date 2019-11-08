@@ -195,6 +195,9 @@ namespace STREAM {
 
         static bool pointOverlapsMultipoint(Geometry *multipoint, Geometry *point, const double tolerance);
 
+        static bool
+        pointInRectangle(const std::list<double> &mins, const std::list<double> &maxs, Geometry *point);
+
         static void Local2Global(const double &lat, const double &lon, const double &northDiff, const double &eastDiff,
                                  double &xDiff, double &yDiff, double &zDiff);
 

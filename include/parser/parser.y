@@ -168,6 +168,17 @@ window(A) ::= K_OPEN_SQUARE_BRACKET K_JUMPING V_DOUBLE(B) K_M K_ON IDENTIFIER(C)
     A = new STREAM::JumpingDistanceWindow(*(B->doubleValue), *(C->stringValue));
 }
 
+window(A) ::= K_OPEN_SQUARE_BRACKET K_AREA V_STRING(B) V_STRING(C) K_ON IDENTIFIER(D) K_CLOSE_SQUARE_BRACKET. {
+
+    std::string wkt1 = *(B->stringValue);
+    wkt1 = wkt1.substr(1, wkt1.size() - 2);
+
+    std::string wkt2 = *(C->stringValue);
+    wkt2 = wkt2.substr(1, wkt2.size() - 2);
+
+    A = new STREAM::AreaWindow(wkt1,wkt2, *(D->stringValue));
+}
+
 
 // +================================+
 // |            INSERTION           |

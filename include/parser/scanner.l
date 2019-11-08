@@ -47,6 +47,7 @@
 "way"	         	    {return K_WAY;}
 "session"	         	{return K_SESSION;}
 "jumping"	         	{return K_JUMPING;}
+"area"	         	    {return K_AREA;}
 "ms"                    {return K_MS;}
 "m"                     {return K_M;}
 [a-z_]+[0-9]*		    {token.stringValue = new std::string(yytext); return IDENTIFIER;}
