@@ -85,8 +85,6 @@ int sqlite3_extension_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routi
     // Decode geometry
     sqlite3_create_function_v2(db, "AsWKT", 1, SQLITE_ANY, NULL, asWKT, NULL, NULL, NULL);
 
-    std::cout << "STREAMS loaded." << std::endl;
-
     return SQLITE_OK;
 }
 };
