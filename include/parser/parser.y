@@ -14,7 +14,7 @@
 }
 
 %parse_accept {
- std::cout << "Parser Sucess." << std::endl;
+
 }
 
 %token_type {STREAM::token*}

@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 # Calling flex and lemon to generate scanner- and parser-sources
 #set(UPDATE_PARSER true)
-set(UPDATE_PARSER false)
+set(UPDATE_PARSER true)
 
 # Setting target architecture (LINUX64 = Desktop, ARM6 = Raspberry PI3)
 set(DST_HARDWARE "LINUX64")
@@ -58,6 +58,10 @@ ENDIF ()
 install(TARGETS streams libstream-tests
         LIBRARY DESTINATION lib/${triple}
         RUNTIME DESTINATION bin)
+
+add_custom_command(TARGET streams POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:streams> ../build/libstreams.so
+        )
 
 set(CMAKE_C_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_COMPILER_TARGET ${triple})

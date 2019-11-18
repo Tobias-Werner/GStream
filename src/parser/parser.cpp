@@ -1523,7 +1523,7 @@ static void yy_accept(
 /*********** Begin %parse_accept code *****************************************/
 #line 16 "../include/parser/parser.y"
 
- std::cout << "Parser Sucess." << std::endl;
+
 #line 1528 "../include/parser/parser.c"
 /*********** End %parse_accept code *******************************************/
   ParseARG_STORE /* Suppress warning about unused %extra_argument variable */
