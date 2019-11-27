@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 11)
 #############################################
 
 # Calling flex and lemon to generate scanner- and parser-sources
-set(UPDATE_PARSER true)
+set(UPDATE_PARSER false)
 #set(UPDATE_PARSER true)
 
 # Setting target architecture (LINUX64 = Desktop, ARM6 = Raspberry PI3)
